@@ -2,7 +2,6 @@ package br.com.blitech.authorization.api.security;
 
 import br.com.blitech.authorization.api.filter.JwtAuthenticationFilter;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

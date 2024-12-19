@@ -18,7 +18,6 @@ public class ActionModelAssembler {
 
     public Action toEntity(@NotNull ActionInputModel actionInputModel) {
         return new Action(
-            null,
             actionInputModel.getName()
         );
     }

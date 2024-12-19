@@ -10,6 +10,7 @@ import br.com.blitech.authorization.domain.exception.alreadyexistsexception.Prof
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
 import br.com.blitech.authorization.domain.service.ProfileService;
+import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ public class ProfileController {
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('PROFILES.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     public ProfileModel findById(@PathVariable Long applicationId, @PathVariable Long profileId) throws ProfileNotFoundException, ApplicationNotFoundException {
-        return profileModelAssembler.toModel(profileService.findOrThrow(applicationId, profileId));
+        return profileModelAssembler.toModel(profileService.findOrThrow(profileId, applicationId));
     }
 
     @PostMapping
@@ -62,9 +63,9 @@ public class ProfileController {
     @LogAndValidate
     @PreAuthorize("hasAuthority('PROFILES.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     public ProfileModel update(@PathVariable Long applicationId, @PathVariable Long profileId, @NotNull @RequestBody ProfileInputModel profileInputModel) throws ProfileAlreadyExistsException, ProfileNotFoundException, ApplicationNotFoundException {
-        var profile = profileService.findOrThrow(applicationId, profileId);
+        var profile = profileService.findOrThrow(profileId, applicationId);
         var changedProfile = profileService.save(profileModelAssembler.applyModel(applicationId, profile, profileInputModel));
-        return profileModelAssembler.toModel(profileService.findOrThrow(applicationId, changedProfile.getId()));
+        return profileModelAssembler.toModel(profileService.findOrThrow(changedProfile.getId(), applicationId));
     }
 
     @DeleteMapping("/{profileId}")

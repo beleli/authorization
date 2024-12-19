@@ -17,11 +17,10 @@ public class Action extends UpdateControl{
     public Long getId() { return id; }
     public String getName() { return name; }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) { this.name = setString(name); }
 
-    public Action(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public Action(String name) {
+        this.name = setString(name);
     }
 
     public Action(Long id) {
@@ -29,4 +28,20 @@ public class Action extends UpdateControl{
     }
 
     public Action() { }
+
+    @Override
+    protected void prePersist() {
+        normalizeFields();
+        super.prePersist();
+    }
+
+    @Override
+    protected void preUpdate() {
+        normalizeFields();
+        super.preUpdate();
+    }
+
+    private void normalizeFields() {
+        this.name = setString(name);
+    }
 }

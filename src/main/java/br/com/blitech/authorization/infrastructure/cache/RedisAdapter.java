@@ -23,6 +23,9 @@ public class RedisAdapter implements CacheService {
         if (value == null) {
             return null;
         }
+        if (clazz == String.class) {
+            return (T) value;
+        }
         try {
             return objectMapper.readValue(value.toString(), clazz);
         } catch (Exception e) {

@@ -40,9 +40,9 @@ public class Application extends UpdateControl{
     public void setToken(String token) { this.token = token; }
     public void setUser(String user) { this.user = user; }
     public void setPassword(String password) { this.password = password; }
+    public void setProfiles(Set<Profile> profiles) { this.profiles = profiles; }
 
-    public Application(Long id, String name, String token, String user, String password) {
-        this.id = id;
+    public Application(String name, String token, String user, String password) {
         this.name = name;
         this.token = token;
         this.user = user;
@@ -52,4 +52,22 @@ public class Application extends UpdateControl{
     public Application(Long id) { this.id = id; }
 
     public Application() { }
+
+    @Override
+    protected void prePersist() {
+        normalizeFields();
+        super.prePersist();
+    }
+
+    @Override
+    protected void preUpdate() {
+        normalizeFields();
+        super.preUpdate();
+    }
+
+    private void normalizeFields() {
+        this.name = setString(name);
+        this.token = setString(token);
+        this.user = setString(user);
+    }
 }

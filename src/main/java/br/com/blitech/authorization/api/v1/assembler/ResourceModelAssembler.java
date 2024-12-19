@@ -18,7 +18,6 @@ public class ResourceModelAssembler {
 
     public Resource toEntity(@NotNull ResourceInputModel resourceInputModel) {
         return new Resource(
-            null,
             resourceInputModel.getName()
         );
     }

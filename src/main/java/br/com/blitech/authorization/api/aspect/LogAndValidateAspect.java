@@ -44,7 +44,6 @@ public class LogAndValidateAspect {
 
     @Before("logMethods(logAndValidate)")
     public void logRequest(JoinPoint joinPoint, LogAndValidate logAndValidate) {
-
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
             getLogger(joinPoint).warn("Request attributes are null; cannot log request.");

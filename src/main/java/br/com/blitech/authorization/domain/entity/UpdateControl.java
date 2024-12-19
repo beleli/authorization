@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
 @MappedSuperclass
-abstract public class UpdateControl {
+abstract public class UpdateControl extends BaseEntity {
 
     @Column(name = "dt_create", nullable = false)
     private OffsetDateTime createDate;
@@ -17,8 +17,10 @@ abstract public class UpdateControl {
     public OffsetDateTime getUpdateDate() { return updateDate; }
 
     @PrePersist
-    public void prePersist() { createDate = OffsetDateTime.now(); }
+    protected void prePersist() { createDate = OffsetDateTime.now(); }
 
     @PreUpdate
-    public void preUpdate() { updateDate = OffsetDateTime.now(); }
+    protected void preUpdate() {
+        updateDate = OffsetDateTime.now();
+    }
 }

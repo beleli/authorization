@@ -34,16 +34,31 @@ public class Profile extends UpdateControl {
     public Set<ProfileResourceAction> getResourceActions() { return resourceActions; }
 
     public void setApplication(Application application) { this.application = application; }
-    public void setName(String name) { this.name = name; }
-    public void setGroup(String group) { this.group = group; }
+    public void setName(String name) { this.name = setString(name); }
+    public void setGroup(String group) { this.group = setString(group, false); }
     public void setResourceActions(Set<ProfileResourceAction> resourceActions) { this.resourceActions = resourceActions; }
 
-    public Profile(Long id, Application application, String name, String group) {
-        this.id = id;
+    public Profile(Application application, String name, String group) {
         this.application = application;
-        this.name = name;
-        this.group = group;
+        this.name = setString(name);
+        this.group = setString(group, false);
     }
 
     public Profile() { }
+
+    @Override
+    protected void prePersist() {
+        normalizeFields();
+        super.prePersist();
+    }
+
+    @Override
+    protected void preUpdate() {
+        normalizeFields();
+        super.preUpdate();
+    }
+
+    private void normalizeFields() {
+        this.name = setString(name);
+    }
 }

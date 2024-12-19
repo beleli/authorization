@@ -19,8 +19,7 @@ public class Resource extends UpdateControl {
 
     public void setName(String name) { this.name = name; }
 
-    public Resource(Long id, String name) {
-        this.id = id;
+    public Resource(String name) {
         this.name = name;
     }
 
@@ -29,4 +28,20 @@ public class Resource extends UpdateControl {
     }
 
     public Resource() { }
+
+    @Override
+    protected void prePersist() {
+        normalizeFields();
+        super.prePersist();
+    }
+
+    @Override
+    protected void preUpdate() {
+        normalizeFields();
+        super.preUpdate();
+    }
+
+    private void normalizeFields() {
+        this.name = setString(name);
+    }
 }

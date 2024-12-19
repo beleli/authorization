@@ -48,7 +48,6 @@ public class ProfileModelAssembler {
 
     public Profile toEntity(Long applicationId, @NotNull ProfileInputModel profileInputModel) {
         Profile profile = new Profile(
-                null,
                 new Application(applicationId),
                 profileInputModel.getName(),
                 profileInputModel.getGroup()

@@ -1,6 +1,7 @@
 package br.com.blitech.authorization.api.security;
 
 import br.com.blitech.authorization.core.properties.JwtKeyStoreProperties;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -27,6 +28,7 @@ public class JwtKeyProvider {
         this.publicKey = loadPublicKey();
     }
 
+    @NotNull
     private KeyStore loadKeyStore() {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");

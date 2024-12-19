@@ -20,7 +20,6 @@ public class ApplicationModelAssembler {
 
     public Application toEntity(@NotNull ApplicationInputModel applicationInputModel) {
         return new Application(
-                null,
                 applicationInputModel.getName(),
                 applicationInputModel.getToken(),
                 applicationInputModel.getUser(),
