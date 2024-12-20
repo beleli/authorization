@@ -17,10 +17,10 @@ public class Action extends UpdateControl{
     public Long getId() { return id; }
     public String getName() { return name; }
 
-    public void setName(String name) { this.name = setString(name); }
+    public void setName(String name) { this.name = name; }
 
     public Action(String name) {
-        this.name = setString(name);
+        this.name = name;
     }
 
     public Action(Long id) {
