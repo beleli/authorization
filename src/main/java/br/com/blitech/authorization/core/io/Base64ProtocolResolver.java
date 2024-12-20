@@ -2,6 +2,7 @@ package br.com.blitech.authorization.core.io;
 
 import java.util.Base64;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.ByteArrayResource;
@@ -13,7 +14,7 @@ public class Base64ProtocolResolver implements ProtocolResolver, ApplicationList
     private static final String BASE64_PREFIX = "base64:";
 
     @Override
-    public Resource resolve(String location, ResourceLoader resourceLoader) {
+    public Resource resolve(@NotNull String location, ResourceLoader resourceLoader) {
         if (location.startsWith(BASE64_PREFIX)) {
             byte[] decodedResource = Base64.getDecoder().decode(location.substring(BASE64_PREFIX.length()));
             return new ByteArrayResource(decodedResource);
@@ -22,7 +23,7 @@ public class Base64ProtocolResolver implements ProtocolResolver, ApplicationList
     }
 
     @Override
-    public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+    public void onApplicationEvent(@NotNull ApplicationContextInitializedEvent event) {
         event.getApplicationContext().addProtocolResolver(this);
     }
 }

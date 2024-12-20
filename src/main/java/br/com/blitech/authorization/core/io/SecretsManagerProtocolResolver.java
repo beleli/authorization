@@ -2,6 +2,7 @@ package br.com.blitech.authorization.core.io;
 
 import br.com.blitech.authorization.core.config.SecretsManagerConfig;
 import br.com.blitech.authorization.core.properties.SecretsManagerProperties;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.io.ByteArrayResource;
@@ -17,7 +18,7 @@ public class SecretsManagerProtocolResolver implements ProtocolResolver, Applica
     private final Base64ProtocolResolver base64ProtocolResolver = new Base64ProtocolResolver();
 
     @Override
-    public Resource resolve(String location, ResourceLoader resourceLoader) {
+    public Resource resolve(@NotNull String location, ResourceLoader resourceLoader) {
         if (location.startsWith(SECRETS_MANAGER_PREFIX)) {
             String key = location.substring(SECRETS_MANAGER_PREFIX.length());
             String decodedResource = this.getSecretValue(key);
@@ -28,7 +29,7 @@ public class SecretsManagerProtocolResolver implements ProtocolResolver, Applica
     }
 
     @Override
-    public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+    public void onApplicationEvent(@NotNull ApplicationContextInitializedEvent event) {
         event.getApplicationContext().addProtocolResolver(this);
     }
 
