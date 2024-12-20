@@ -94,7 +94,7 @@ class ProfileControllerTest {
 
     @Test
     @WithMockUser(authorities = "PROFILES.WRITE")
-    void testUpdate() throws ProfileAlreadyExistsException, ProfileNotFoundException, ApplicationNotFoundException {
+    void testUpdate() throws BusinessException {
         when(profileService.findOrThrow(anyLong(), anyLong())).thenReturn(profile);
         when(profileService.save(any())).thenReturn(profile);
         when(profileModelAssembler.applyModel(anyLong(), any(), any())).thenReturn(profile);

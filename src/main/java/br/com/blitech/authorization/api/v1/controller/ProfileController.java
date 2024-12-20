@@ -7,9 +7,12 @@ import br.com.blitech.authorization.api.v1.model.ProfileModel;
 import br.com.blitech.authorization.api.v1.model.input.ProfileInputModel;
 import br.com.blitech.authorization.domain.exception.BusinessException;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ProfileAlreadyExistsException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ResourceNotFoundException;
 import br.com.blitech.authorization.domain.service.ProfileService;
+import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,10 +64,14 @@ public class ProfileController {
     @PutMapping("/{profileId}")
     @LogAndValidate
     @PreAuthorize("hasAuthority('PROFILES.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
-    public ProfileModel update(@PathVariable Long applicationId, @PathVariable Long profileId, @NotNull @RequestBody ProfileInputModel profileInputModel) throws ProfileAlreadyExistsException, ProfileNotFoundException, ApplicationNotFoundException {
-        var profile = profileService.findOrThrow(profileId, applicationId);
-        var changedProfile = profileService.save(profileModelAssembler.applyModel(applicationId, profile, profileInputModel));
-        return profileModelAssembler.toModel(profileService.findOrThrow(changedProfile.getId(), applicationId));
+    public ProfileModel update(@PathVariable Long applicationId, @PathVariable Long profileId, @NotNull @RequestBody ProfileInputModel profileInputModel) throws BusinessException {
+        try {
+            var profile = profileService.findOrThrow(profileId, applicationId);
+            var changedProfile = profileService.save(profileModelAssembler.applyModel(applicationId, profile, profileInputModel));
+            return profileModelAssembler.toModel(changedProfile);
+        } catch (ApplicationNotFoundException | ResourceNotFoundException | ActionNotFoundException e) {
+            throw new BusinessException(e.getMessage());
+        }
     }
 
     @DeleteMapping("/{profileId}")

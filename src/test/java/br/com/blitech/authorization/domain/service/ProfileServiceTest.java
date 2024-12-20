@@ -1,12 +1,12 @@
 package br.com.blitech.authorization.domain.service;
 
-import br.com.blitech.authorization.domain.entity.Application;
-import br.com.blitech.authorization.domain.entity.Profile;
-import br.com.blitech.authorization.domain.entity.ProfileResourceAction;
+import br.com.blitech.authorization.domain.entity.*;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ProfileAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entityinuse.ProfileInUseException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ResourceNotFoundException;
 import br.com.blitech.authorization.domain.repository.ProfileRepository;
 import br.com.blitech.authorization.domain.repository.ProfileResourceActionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -72,7 +73,7 @@ class ProfileServiceTest {
     }
 
     @Test
-    void testSave() throws ProfileAlreadyExistsException, ApplicationNotFoundException {
+    void testSave() throws ProfileAlreadyExistsException, ApplicationNotFoundException, ActionNotFoundException, ResourceNotFoundException, ProfileNotFoundException {
         Profile profile = createProfile();
         when(applicationService.findOrThrow(profile.getApplication().getId())).thenReturn(createApplication());
         when(profileRepository.save(profile)).thenReturn(profile);
@@ -82,6 +83,42 @@ class ProfileServiceTest {
 
         doThrow(DataIntegrityViolationException.class).when(profileRepository).save(profile);
         assertThrows(ProfileAlreadyExistsException.class, () -> profileService.save(profile));
+    }
+
+    @Test
+    void testSaveThrowsProfileNotFoundException() throws ApplicationNotFoundException {
+        Profile profile = createProfile();
+        when(applicationService.findOrThrow(profile.getApplication().getId())).thenReturn(createApplication());
+
+        JpaObjectRetrievalFailureException jpaException = mock(JpaObjectRetrievalFailureException.class);
+        when(jpaException.getMessage()).thenReturn(Profile.class.getCanonicalName());
+        doThrow(jpaException).when(profileRepository).save(profile);
+
+        assertThrows(ProfileNotFoundException.class, () -> profileService.save(profile));
+    }
+
+    @Test
+    void testSaveThrowsResourceNotFoundException() throws ApplicationNotFoundException {
+        Profile profile = createProfile();
+        when(applicationService.findOrThrow(profile.getApplication().getId())).thenReturn(createApplication());
+
+        JpaObjectRetrievalFailureException jpaException = mock(JpaObjectRetrievalFailureException.class);
+        when(jpaException.getMessage()).thenReturn(Resource.class.getCanonicalName());
+        doThrow(jpaException).when(profileRepository).save(profile);
+
+        assertThrows(ResourceNotFoundException.class, () -> profileService.save(profile));
+    }
+
+    @Test
+    void testSaveThrowsActionNotFoundException() throws ApplicationNotFoundException {
+        Profile profile = createProfile();
+        when(applicationService.findOrThrow(profile.getApplication().getId())).thenReturn(createApplication());
+
+        JpaObjectRetrievalFailureException jpaException = mock(JpaObjectRetrievalFailureException.class);
+        when(jpaException.getMessage()).thenReturn(Action.class.getCanonicalName());
+        doThrow(jpaException).when(profileRepository).save(profile);
+
+        assertThrows(ActionNotFoundException.class, () -> profileService.save(profile));
     }
 
     @Test

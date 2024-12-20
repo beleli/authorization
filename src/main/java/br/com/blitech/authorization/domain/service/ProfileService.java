@@ -1,17 +1,19 @@
 package br.com.blitech.authorization.domain.service;
 
-import br.com.blitech.authorization.domain.entity.Application;
-import br.com.blitech.authorization.domain.entity.Profile;
-import br.com.blitech.authorization.domain.entity.ProfileResourceAction;
+import br.com.blitech.authorization.domain.entity.*;
+import br.com.blitech.authorization.domain.exception.EntityNotFoundException;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ProfileAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entityinuse.ProfileInUseException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ResourceNotFoundException;
 import br.com.blitech.authorization.domain.repository.ProfileRepository;
 import br.com.blitech.authorization.domain.repository.ProfileResourceActionRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +49,8 @@ public class ProfileService {
         return profileRepository.findByIdAndApplicationId(id, application.getId()).orElseThrow(ProfileNotFoundException::new);
     }
 
-    @Transactional(rollbackFor = ProfileAlreadyExistsException.class)
-    public Profile save(@NotNull Profile profile) throws ProfileAlreadyExistsException, ApplicationNotFoundException {
+    @Transactional(rollbackFor = {ProfileAlreadyExistsException.class, EntityNotFoundException.class})
+    public Profile save(@NotNull Profile profile) throws ProfileAlreadyExistsException, ProfileNotFoundException, ApplicationNotFoundException, ResourceNotFoundException, ActionNotFoundException {
         try {
             applicationService.findOrThrow(profile.getApplication().getId());
             profile = profileRepository.save(profile);
@@ -56,6 +58,14 @@ public class ProfileService {
             return profile;
         } catch (DataIntegrityViolationException e) {
             throw new ProfileAlreadyExistsException();
+        } catch (JpaObjectRetrievalFailureException e) {
+            if (e.getMessage().contains(Profile.class.getCanonicalName()))
+                throw new ProfileNotFoundException();
+            if (e.getMessage().contains(Resource.class.getCanonicalName()))
+                throw new ResourceNotFoundException();
+            if (e.getMessage().contains(Action.class.getCanonicalName()))
+                throw new ActionNotFoundException();
+            throw e;
         }
     }
 
