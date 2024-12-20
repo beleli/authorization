@@ -136,7 +136,7 @@ class ApplicationServiceTest {
     void testGetApplicationAuthorities() throws ApplicationNotFoundException {
         Long id = 1L;
         Application application = createApplication();
-        ProfileResourceAction action = createNewProfileResourceAction();
+        ProfileResourceAction action = createProfileResourceAction();
 
         when(applicationRepository.findById(id)).thenReturn(Optional.of(application));
         when(profileResourceActionRepository.findByProfileApplication(application)).thenReturn(Collections.singletonList(action));

@@ -31,12 +31,12 @@ public class TestUtils {
 
 
     @NotNull
-    public static Profile createNewProfile() {
+    public static Profile createProfile() {
         return new Profile(createApplication(), "profile","group");
     }
 
     @NotNull
-    public static ProfileResourceAction createNewProfileResourceAction() {
-        return new ProfileResourceAction(createNewProfile(), createResource(), createAction());
+    public static ProfileResourceAction createProfileResourceAction() {
+        return new ProfileResourceAction(createProfile(), createResource(), createAction());
     }
 }

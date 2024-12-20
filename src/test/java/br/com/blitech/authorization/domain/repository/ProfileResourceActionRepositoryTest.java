@@ -41,7 +41,7 @@ class ProfileResourceActionRepositoryTest {
     @BeforeEach
     void setUp() {
         application = applicationRepository.save(createApplication());
-        profile = createNewProfile();
+        profile = createProfile();
         profile.setApplication(application);
         profile = profileRepository.save(profile);
         resource = resourceRepository.save(createResource());

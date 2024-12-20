@@ -40,9 +40,7 @@ public class LoginController {
     @RateLimit
     @LogAndValidate
     @PostMapping("/application")
-    public LoginModel loginApplication(
-            @NotNull @RequestBody LoginApplicationInputModel loginApplicationInputModel
-    ) throws UserNotAuthorizedException {
+    public LoginModel loginApplication(@NotNull @RequestBody LoginApplicationInputModel loginApplicationInputModel) throws UserNotAuthorizedException {
         try {
             var application = applicationService.validateLogin(loginApplicationInputModel.getUsername(), loginApplicationInputModel.getPassword());
             var authorities = applicationService.getApplicationAuthorities(application.getId());

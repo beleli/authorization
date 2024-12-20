@@ -10,4 +10,9 @@ public class ResourceActionInputModel extends Loggable {
 
     public Long getResourceId() { return resourceId; }
     public List<Long> getActions() { return actions; }
+
+    public ResourceActionInputModel(Long resourceId, List<Long> actions) {
+        this.resourceId = resourceId;
+        this.actions = actions;
+    }
 }

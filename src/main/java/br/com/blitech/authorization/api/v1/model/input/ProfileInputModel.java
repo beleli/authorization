@@ -25,4 +25,10 @@ public class ProfileInputModel extends Loggable {
     public String getName() { return name; }
     public String getGroup() { return group; }
     public List<ResourceActionInputModel> getResources() { return resources; }
+
+    public ProfileInputModel(String name, String group, List<ResourceActionInputModel> resources) {
+        this.name = name;
+        this.group = group;
+        this.resources = resources;
+    }
 }

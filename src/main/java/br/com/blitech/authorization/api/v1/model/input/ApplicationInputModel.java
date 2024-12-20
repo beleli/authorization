@@ -29,4 +29,11 @@ public class ApplicationInputModel extends Loggable {
     public String getToken() { return token; }
     public String getUser() { return user; }
     public String getPassword() { return password; }
+
+    public ApplicationInputModel(String name, String token, String user, String password) {
+        this.name = name;
+        this.token = token;
+        this.user = user;
+        this.password = password;
+    }
 }

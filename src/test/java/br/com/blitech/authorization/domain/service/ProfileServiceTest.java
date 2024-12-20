@@ -47,7 +47,7 @@ class ProfileServiceTest {
 
     @Test
     void testFindAll() throws ApplicationNotFoundException {
-        Set<Profile> profiles = new HashSet<>(Collections.singletonList(createNewProfile()));
+        Set<Profile> profiles = new HashSet<>(Collections.singletonList(createProfile()));
         Application application = createApplication();
         application.setProfiles(profiles);
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
@@ -59,7 +59,7 @@ class ProfileServiceTest {
     @Test
     void testFindOrThrow() throws ApplicationNotFoundException, ProfileNotFoundException {
         Application application = createExistentApplication();
-        Profile profile = createNewProfile();
+        Profile profile = createProfile();
         profile.setApplication(application);
         when(applicationService.findOrThrow(any())).thenReturn(application);
         when(profileRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.of(profile));
@@ -73,7 +73,7 @@ class ProfileServiceTest {
 
     @Test
     void testSave() throws ProfileAlreadyExistsException, ApplicationNotFoundException {
-        Profile profile = createNewProfile();
+        Profile profile = createProfile();
         when(applicationService.findOrThrow(profile.getApplication().getId())).thenReturn(createApplication());
         when(profileRepository.save(profile)).thenReturn(profile);
 
@@ -87,7 +87,7 @@ class ProfileServiceTest {
     @Test
     void testDelete() throws ApplicationNotFoundException {
         Application application = createExistentApplication();
-        Profile profile = createNewProfile();
+        Profile profile = createProfile();
         profile.setApplication(application);
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
         when(profileRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.of(profile));
@@ -102,8 +102,8 @@ class ProfileServiceTest {
     @Test
     void testGetProfileAuthorities() throws ProfileNotFoundException {
         String profileName = "testProfile";
-        Profile profile = createNewProfile();
-        ProfileResourceAction action = createNewProfileResourceAction();
+        Profile profile = createProfile();
+        ProfileResourceAction action = createProfileResourceAction();
         when(profileRepository.findByName(profileName)).thenReturn(Optional.of(profile));
         when(profileResourceActionRepository.findByProfile(profile)).thenReturn(Collections.singletonList(action));
 

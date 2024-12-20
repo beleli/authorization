@@ -2,6 +2,7 @@ package br.com.blitech.authorization.api.v1.model;
 
 import br.com.blitech.authorization.core.log.Loggable;
 
+import java.util.List;
 import java.util.Set;
 
 public class ResourceActionModel extends Loggable {

@@ -42,7 +42,7 @@ public class ProfileModelAssembler {
                             .orElse(null);
                     return new ResourceActionModel(resourceId, resourceName, entry.getValue());
                 })
-                .collect(Collectors.toList())
+                .collect(Collectors.toSet())
             );
         }
 

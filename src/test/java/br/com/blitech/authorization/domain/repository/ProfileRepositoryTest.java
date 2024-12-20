@@ -12,7 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.Optional;
 
 import static br.com.blitech.authorization.domain.TestUtils.createApplication;
-import static br.com.blitech.authorization.domain.TestUtils.createNewProfile;
+import static br.com.blitech.authorization.domain.TestUtils.createProfile;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -31,7 +31,7 @@ class ProfileRepositoryTest {
     @BeforeEach
     void setUp() {
         application = applicationRepository.save(createApplication());
-        profile = createNewProfile();
+        profile = createProfile();
         profile.setApplication(application);
         profile = profileRepository.save(profile);
     }

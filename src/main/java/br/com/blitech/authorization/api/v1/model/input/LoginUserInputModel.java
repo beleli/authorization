@@ -26,4 +26,10 @@ public class LoginUserInputModel extends Loggable {
     public String getUsername() { return username; }
     public String getPassword() { return password; }
     public String getApplication() { return application; }
+
+    public LoginUserInputModel(String username, String password, String application) {
+        this.username = username;
+        this.password = password;
+        this.application = application;
+    }
 }

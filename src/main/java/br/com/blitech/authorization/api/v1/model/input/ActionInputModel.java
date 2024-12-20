@@ -11,4 +11,8 @@ public class ActionInputModel extends Loggable {
     private String name;
 
     public String getName() { return name; }
+
+    public ActionInputModel(String name) {
+        this.name = name;
+    }
 }

@@ -11,4 +11,8 @@ public class ResourceInputModel extends Loggable {
     private String name;
 
     public String getName() { return name; }
+
+    public ResourceInputModel(String name) {
+        this.name = name;
+    }
 }

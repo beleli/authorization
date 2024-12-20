@@ -10,13 +10,13 @@ public class ApplicationModel extends Loggable {
     @MaskProperty(format = LogMaskFormat.NAME)
     private String user;
 
-    public ApplicationModel(Long id, String name, String user) {
-        this.applicationId = id;
-        this.name = name;
-        this.user = user;
-    }
-
     public Long getApplicationId() { return applicationId; }
     public String getName() { return name; }
     public String getUser() { return user; }
+
+    public ApplicationModel(Long applicationId, String name, String user) {
+        this.applicationId = applicationId;
+        this.name = name;
+        this.user = user;
+    }
 }

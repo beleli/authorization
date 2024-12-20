@@ -10,7 +10,6 @@ import br.com.blitech.authorization.domain.exception.alreadyexistsexception.Prof
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
 import br.com.blitech.authorization.domain.service.ProfileService;
-import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,7 +40,7 @@ public class ProfileController {
     @GetMapping("/{profileId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('PROFILES.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
-    public ProfileModel findById(@PathVariable Long applicationId, @PathVariable Long profileId) throws ProfileNotFoundException, ApplicationNotFoundException {
+    public ProfileModel find(@PathVariable Long applicationId, @PathVariable Long profileId) throws ProfileNotFoundException, ApplicationNotFoundException {
         return profileModelAssembler.toModel(profileService.findOrThrow(profileId, applicationId));
     }
 

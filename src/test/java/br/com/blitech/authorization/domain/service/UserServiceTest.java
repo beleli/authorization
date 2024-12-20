@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import static br.com.blitech.authorization.domain.TestUtils.createApplication;
-import static br.com.blitech.authorization.domain.TestUtils.createNewProfileResourceAction;
+import static br.com.blitech.authorization.domain.TestUtils.createProfileResourceAction;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -45,7 +45,7 @@ class UserServiceTest {
         String username = "testUser";
         String password = "testPassword";
         List<String> adGroups = Collections.singletonList("testGroup");
-        ProfileResourceAction action = createNewProfileResourceAction();
+        ProfileResourceAction action = createProfileResourceAction();
 
         when(domainService.authenticate(username, password)).thenReturn(true);
         when(domainService.findGroupsByUser(username)).thenReturn(adGroups);
