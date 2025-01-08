@@ -3,7 +3,7 @@ package br.com.blitech.authorization.domain.entity;
 public abstract class BaseEntity {
 
     protected String setString(String value, boolean toLowerCase) {
-        if (value.isBlank()) return null;
+        if (value == null || value.isBlank()) return null;
         return toLowerCase ? value.toLowerCase() : value;
     }
 

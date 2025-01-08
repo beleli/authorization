@@ -37,7 +37,7 @@ dependencies {
 	implementation("software.amazon.awssdk:secretsmanager:2.21.29")
 
 	implementation("io.micrometer:micrometer-tracing-bridge-brave:1.2.3")
-//	implementation("io.micrometer:micrometer-registry-otlp:1.13.4")
+	implementation("io.micrometer:micrometer-registry-otlp:1.13.4")
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'

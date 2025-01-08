@@ -43,7 +43,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUncaughtException(Exception ex, WebRequest request) {
-        logger.error(ex);
+        logger.error(ex.getMessage(), ex);
         return this.handleExceptionInternal(ex, getMessage("api.unscathed-exception"), null, HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 

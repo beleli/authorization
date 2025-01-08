@@ -62,6 +62,47 @@ services:
     networks:
       - blitech-net
 
+  prometheus:
+    image: prom/prometheus
+    container_name: authorization-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docker/prometheus:/etc/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+    networks:
+      - blitech-net
+
+  otel-collector:
+    image: otel/opentelemetry-collector
+    container_name: authorization-otel-collector
+    ports:
+      - "4318:4318"  # Porta para recepção de métricas OTLP
+      - "9464:9464"  # Porta para exposição de métricas Prometheus
+    command:
+      - --config=/etc/otel-collector-config.yml
+    volumes:
+      - ./docker/opentelemetry/otel-collector-config.yml:/etc/otel-collector-config.yml
+    networks:
+      - blitech-net
+
+  grafana:
+    image: grafana/grafana
+    container_name: authorization-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin  # Senha padrão, altere conforme necessário
+      - GF_SECURITY_ADMIN_PASSWORD_IS_SECRET=true
+    volumes:
+      - ./docker/grafana:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning  # Volume de provisionamento
+    depends_on:
+      - prometheus
+    networks:
+      - blitech-net
+
 networks:
   blitech-net:
     driver: bridge

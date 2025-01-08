@@ -24,5 +24,4 @@ public class PageJsonSerializer extends JsonSerializer<Page<?>> {
 		
 		gen.writeEndObject();
 	}
-
 }
