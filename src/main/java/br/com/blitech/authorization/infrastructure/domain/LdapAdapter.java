@@ -39,7 +39,7 @@ public class LdapAdapter implements DomainService {
                 query().base(baseSearch).where(S_AM_ACCOUNT_NAME).is(username),
                 (AttributesMapper<List<String>>) attributes -> {
                     List<String> groups = new ArrayList<>();
-                    NamingEnumeration<?> groupAttributes = attributes.getAll();
+                    NamingEnumeration<?> groupAttributes = attributes.get("memberOf").getAll();
                     while (groupAttributes.hasMore()) {
                         LdapName ldapName = new LdapName(groupAttributes.next().toString());
                         for (Rdn rdn: ldapName.getRdns()) {

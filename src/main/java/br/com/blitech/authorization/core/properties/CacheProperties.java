@@ -11,10 +11,8 @@ public class CacheProperties {
 
     @PostConstruct
     public void validate() {
-        if (type == Type.REDIS) {
-            if (redis == null) {
-                throw new IllegalArgumentException("blifood.cache.redis configuration cannot be null");
-            }
+        if (type == Type.REDIS && redis == null) {
+            throw new IllegalArgumentException("blifood.cache.redis configuration cannot be null");
         }
     }
 

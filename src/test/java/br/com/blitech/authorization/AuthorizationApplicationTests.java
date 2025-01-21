@@ -10,5 +10,6 @@ class AuthorizationApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// This test is used to check if the application context can be loaded
 	}
 }

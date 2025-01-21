@@ -124,11 +124,17 @@ public abstract class Loggable {
     }
 
     private static String toLogSafely(Object obj) {
-        return (obj instanceof Loggable) ? ((Loggable) obj).toLog() : obj.toString();
+        if (obj instanceof Loggable loggable) {
+            return loggable.toLog();
+        }
+        return obj.toString();
     }
 
     private static String toJsonLogSafely(Object obj) {
-        return (obj instanceof Loggable) ? ((Loggable) obj).toJsonLog() : obj.toString();
+        if (obj instanceof Loggable loggable) {
+            return loggable.toJsonLog();
+        }
+        return obj.toString();
     }
 
     @FunctionalInterface
