@@ -34,8 +34,8 @@ public class Profile extends UpdateControl {
     public Set<ProfileResourceAction> getResourceActions() { return resourceActions; }
 
     public void setApplication(Application application) { this.application = application; }
-    public void setName(String name) { this.name = setString(name); }
-    public void setGroup(String group) { this.group = setString(group, false); }
+    public void setName(String name) { this.name = name; }
+    public void setGroup(String group) { this.group = group; }
     public void setResourceActions(Set<ProfileResourceAction> resourceActions) { this.resourceActions = resourceActions; }
 
     public Profile(Application application, String name, String group) {
@@ -60,5 +60,6 @@ public class Profile extends UpdateControl {
 
     private void normalizeFields() {
         this.name = setString(name);
+        this.group = setString(group, false);
     }
 }

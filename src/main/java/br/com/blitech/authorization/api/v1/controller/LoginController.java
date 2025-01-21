@@ -61,7 +61,7 @@ public class LoginController {
                     loginUserInputModel.getUsername(),
                     loginUserInputModel.getPassword()
             );
-            return new LoginModel(generateToken(application.getUser(), application.getName(), authorities));
+            return new LoginModel(generateToken(loginUserInputModel.getUsername(), application.getName(), authorities));
         } catch (UserInvalidPasswordException e) {
             throw new UserNotAuthorizedException();
         } catch (ApplicationNotFoundException e) {
