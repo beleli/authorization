@@ -50,4 +50,3 @@ tasks.named('test') {
 	environment("AUTHORIZATION_SECRETS_MANAGER_IMPL", "localstack")
 	useJUnitPlatform()
 }
-
