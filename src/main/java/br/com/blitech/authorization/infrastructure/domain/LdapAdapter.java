@@ -1,8 +1,8 @@
 package br.com.blitech.authorization.infrastructure.domain;
 
+import br.com.blitech.authorization.core.properties.LdapProperties;
 import br.com.blitech.authorization.domain.service.DomainService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.filter.EqualsFilter;
@@ -21,8 +21,8 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 public class LdapAdapter implements DomainService {
     public static final String S_AM_ACCOUNT_NAME = "sAMAccountName";
 
-    @Value("${authorization.ldap.baseSearch}")
-    private String baseSearch;
+    @Autowired
+    private LdapProperties ldapProperties;
 
     @Autowired
     private LdapTemplate ldapTemplate;
@@ -30,13 +30,13 @@ public class LdapAdapter implements DomainService {
     @Override
     public Boolean authenticate(String username, String password) {
         Filter filter = new EqualsFilter(S_AM_ACCOUNT_NAME, username);
-        return ldapTemplate.authenticate(baseSearch, filter.encode(), password);
+        return ldapTemplate.authenticate(ldapProperties.getBaseSearch(), filter.encode(), password);
     }
 
     @Override
     public List<String> findGroupsByUser(String username) {
         return ldapTemplate.search(
-                query().base(baseSearch).where(S_AM_ACCOUNT_NAME).is(username),
+                query().base(ldapProperties.getBaseSearch()).where(S_AM_ACCOUNT_NAME).is(username),
                 (AttributesMapper<List<String>>) attributes -> {
                     List<String> groups = new ArrayList<>();
                     NamingEnumeration<?> groupAttributes = attributes.get("memberOf").getAll();

@@ -1,5 +1,6 @@
 package br.com.blitech.authorization.infrastructure.domain;
 
+import br.com.blitech.authorization.core.properties.LdapProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,8 +29,8 @@ class LdapAdapterTest {
     @Mock
     private LdapTemplate ldapTemplate;
 
-    @Value("${ldap.context.source.baseSearch}")
-    private String baseSearch;
+    @Mock
+    private LdapProperties ldapProperties;
 
     @InjectMocks
     private LdapAdapter ldapAdapter;
@@ -45,10 +46,10 @@ class LdapAdapterTest {
         String password = "testPassword";
         EqualsFilter filter = new EqualsFilter(LdapAdapter.S_AM_ACCOUNT_NAME, username);
 
-        when(ldapTemplate.authenticate(baseSearch, filter.encode(), password)).thenReturn(true);
+        when(ldapTemplate.authenticate(ldapProperties.getBaseSearch(), filter.encode(), password)).thenReturn(true);
         assertTrue(ldapAdapter.authenticate(username, password));
 
-        when(ldapTemplate.authenticate(baseSearch, filter.encode(), password)).thenReturn(false);
+        when(ldapTemplate.authenticate(ldapProperties.getBaseSearch(), filter.encode(), password)).thenReturn(false);
         assertFalse(ldapAdapter.authenticate(username, password));
     }
 

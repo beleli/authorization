@@ -9,6 +9,8 @@ import org.springframework.ldap.core.ContextSource;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 
+import java.io.IOException;
+
 @Configuration
 @EnableConfigurationProperties(LdapProperties.class)
 public class LdapConfig {
@@ -17,14 +19,14 @@ public class LdapConfig {
     private LdapProperties ldapProperties;
 
     @Bean
-    public LdapContextSource ldapContextSource() {
+    public LdapContextSource ldapContextSource() throws IOException {
         var ldapContextSource = new LdapContextSource();
 
         ldapContextSource.setUrl(ldapProperties.getUrl());
         ldapContextSource.setBase(ldapProperties.getBase());
-        ldapContextSource.setPooled(ldapProperties.getPooled());
-        ldapContextSource.setUserDn(ldapProperties.getUserDn().toString());
-        ldapContextSource.setPassword(ldapProperties.getPassword().toString());
+        ldapContextSource.setPooled(ldapProperties.isPooled());
+        ldapContextSource.setUserDn(ldapProperties.getUserDn());
+        ldapContextSource.setPassword(ldapProperties.getPassword());
 
         return ldapContextSource;
     }

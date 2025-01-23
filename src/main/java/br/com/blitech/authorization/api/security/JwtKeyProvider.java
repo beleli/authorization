@@ -5,7 +5,6 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.PublicKey;
@@ -32,9 +31,7 @@ public class JwtKeyProvider {
     private KeyStore loadKeyStore() {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(
-                    properties.getJksLocation().getInputStream(),
-                    properties.getPassword().getContentAsString(Charset.defaultCharset()).toCharArray()
+            keyStore.load(properties.getJksLocation().getInputStream(), properties.getPassword().toCharArray()
             );
             return keyStore;
         } catch (Exception e) {
@@ -44,9 +41,7 @@ public class JwtKeyProvider {
 
     private Key loadKey() {
         try {
-            return keyStore.getKey(
-                properties.getKeypairAlias().getContentAsString(Charset.defaultCharset()),
-                properties.getPassword().getContentAsString(Charset.defaultCharset()).toCharArray()
+            return keyStore.getKey(properties.getKeypairAlias(), properties.getPassword().toCharArray()
             );
         } catch (Exception e) {
             throw new RuntimeException("Failed to load Key from KeyStore", e);
@@ -55,9 +50,7 @@ public class JwtKeyProvider {
 
     private PublicKey loadPublicKey() {
         try {
-            return keyStore.getCertificate(
-                properties.getKeypairAlias().getContentAsString(Charset.defaultCharset())
-            ).getPublicKey();
+            return keyStore.getCertificate(properties.getKeypairAlias()).getPublicKey();
         } catch (Exception e) {
             throw new RuntimeException("Failed to load PublicKey from KeyStore", e);
         }

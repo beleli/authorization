@@ -5,9 +5,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties("authorization.cache")
 public class CacheProperties {
-
     private Type type;
     private Redis redis;
+
+    public CacheProperties(Type type, Redis redis) {
+        this.type = type;
+        this.redis = redis;
+    }
 
     @PostConstruct
     public void validate() {
@@ -18,9 +22,6 @@ public class CacheProperties {
 
     public Type getType() { return type; }
     public Redis getRedis() { return redis; }
-
-    public void setType(Type type) { this.type = type; }
-    public void setRedis(Redis redis) { this.redis = redis; }
 
     public enum Type {
         REDIS,
