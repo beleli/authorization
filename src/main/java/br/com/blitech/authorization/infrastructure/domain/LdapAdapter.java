@@ -21,7 +21,7 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 public class LdapAdapter implements DomainService {
     public static final String S_AM_ACCOUNT_NAME = "sAMAccountName";
 
-    @Value("${ldap.context.source.baseSearch}")
+    @Value("${authorization.ldap.baseSearch}")
     private String baseSearch;
 
     @Autowired
