@@ -1,7 +1,6 @@
 package br.com.blitech.authorization.core.config;
 
 import br.com.blitech.authorization.core.properties.SecretsManagerProperties;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -16,9 +15,6 @@ import java.net.URI;
 @Configuration
 @EnableConfigurationProperties(SecretsManagerProperties.class)
 public class SecretsManagerConfig {
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private SecretsManagerProperties secretsManagerProperties;
