@@ -57,7 +57,7 @@ services:
         aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name local/authorization/jwtPassword --secret-string "123456"
         aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name local/authorization/jwtAlias --secret-string "algafood"
         aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name local/authorization/ldapUser --secret-string "admin"
-        aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name local/authorization/ldapPassword --secret-string "admin"
+        aws --endpoint-url=http://localstack:4566 secretsmanager create-secret --name local/authorization/ldapPassword --secret-string "base64:YWRtaW4="
       "
     networks:
       - blitech-net
