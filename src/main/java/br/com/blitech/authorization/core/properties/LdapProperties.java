@@ -21,7 +21,7 @@ public class LdapProperties {
     public String getBaseSearch() { return baseSearch; }
     public Boolean isPooled() { return pooled; }
     public String getUserDn() { return userDn; }
-    public String getPassword() throws IOException { return password; }
+    public String getPassword() { return password; }
 
     public LdapProperties(String url, String base, String baseSearch, Boolean pooled, @NotNull Resource userDn, @NotNull Resource password) throws IOException {
         this.url = url;
