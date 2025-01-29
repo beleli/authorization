@@ -20,7 +20,8 @@ public class JwtResourceConfig {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/actuator/**",
-            "/v1/login/**"
+            "/v1/login/**",
+            "/.well-known/jwks.json"
     };
 
     @Bean

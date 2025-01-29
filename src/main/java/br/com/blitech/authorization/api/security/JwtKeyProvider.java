@@ -16,23 +16,25 @@ public class JwtKeyProvider {
     private final KeyStore keyStore;
     private final Key key;
     private final PublicKey publicKey;
+    private final String keyId;
 
     public Key getKey() { return key; }
     public PublicKey getPublicKey() { return publicKey; }
+    public String getKeyId() { return keyId; }
 
-    public JwtKeyProvider(JwtKeyStoreProperties properties) {
+    public JwtKeyProvider(@NotNull JwtKeyStoreProperties properties) {
         this.properties = properties;
         this.keyStore = loadKeyStore();
         this.key = loadKey();
         this.publicKey = loadPublicKey();
+        this.keyId = properties.getKeypairAlias();
     }
 
     @NotNull
     private KeyStore loadKeyStore() {
         try {
             KeyStore keyStore = KeyStore.getInstance("JKS");
-            keyStore.load(properties.getJksLocation().getInputStream(), properties.getPassword().toCharArray()
-            );
+            keyStore.load(properties.getJksLocation().getInputStream(), properties.getPassword().toCharArray());
             return keyStore;
         } catch (Exception e) {
             throw new RuntimeException("Failed to load KeyStore", e);
@@ -41,8 +43,7 @@ public class JwtKeyProvider {
 
     private Key loadKey() {
         try {
-            return keyStore.getKey(properties.getKeypairAlias(), properties.getPassword().toCharArray()
-            );
+            return keyStore.getKey(properties.getKeypairAlias(), properties.getPassword().toCharArray());
         } catch (Exception e) {
             throw new RuntimeException("Failed to load Key from KeyStore", e);
         }
