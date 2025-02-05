@@ -6,6 +6,7 @@ import br.com.blitech.authorization.api.security.JwtKeyProvider;
 import br.com.blitech.authorization.api.v1.model.LoginModel;
 import br.com.blitech.authorization.api.v1.model.input.LoginApplicationInputModel;
 import br.com.blitech.authorization.api.v1.model.input.LoginUserInputModel;
+import br.com.blitech.authorization.api.v1.openapi.LoginControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.BusinessException;
 import br.com.blitech.authorization.domain.exception.business.UserInvalidPasswordException;
 import br.com.blitech.authorization.domain.exception.business.UserNotAuthorizedException;
@@ -23,10 +24,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/v1/login", produces = MediaType.APPLICATION_JSON_VALUE)
-public class LoginController {
+public class LoginController implements LoginControllerOpenApi {
 
     @Autowired
     private JwtKeyProvider jwtKeyProvider;
@@ -37,6 +39,7 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
+    @Override
     @RateLimit
     @LogAndValidate
     @PostMapping("/application")
@@ -50,6 +53,7 @@ public class LoginController {
         }
     }
 
+    @Override
     @RateLimit
     @LogAndValidate
     @PostMapping("/user")
@@ -69,15 +73,19 @@ public class LoginController {
         }
     }
 
-    public String generateToken(String email, String application, Set<String> authorities) {
+    private String generateToken(String email, String application, Set<String> authorities) {
         Date date = new Date();
         Date expiration = new Date(date.getTime() + 3600000);
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("typ", "JWT");
 
+        var scopes = authorities.stream()
+            .map(s -> s.split("\\.")[1])
+            .collect(Collectors.toSet());
+
         Map<String, Object> claims = new HashMap<>();
-        claims.put("scopes", Arrays.asList("READ", "WRITE"));
+        claims.put("scopes", scopes);
         claims.put("authorities", authorities);
         claims.put("application", application);
 

@@ -69,7 +69,7 @@ class ActionControllerTest {
         when(actionService.findOrThrow(anyLong())).thenReturn(action);
         when(actionModelAssembler.toModel(any())).thenReturn(actionModel);
 
-        ActionModel result = actionController.find(1L);
+        ActionModel result = actionController.findById(1L);
 
         assertNotNull(result);
         assertEquals(action.getName(), result.getName());

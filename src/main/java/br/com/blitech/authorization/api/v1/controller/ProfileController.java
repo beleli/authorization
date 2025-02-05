@@ -5,6 +5,7 @@ import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ProfileModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ProfileModel;
 import br.com.blitech.authorization.api.v1.model.input.ProfileInputModel;
+import br.com.blitech.authorization.api.v1.openapi.ProfileControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.BusinessException;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ProfileAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(path = "/v1/applications/{applicationId}/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ProfileController {
+public class ProfileController implements ProfileControllerOpenApi {
 
     @Autowired
     ProfileModelAssembler profileModelAssembler;
@@ -33,6 +34,7 @@ public class ProfileController {
     @Autowired
     private ProfileService profileService;
 
+    @Override
     @GetMapping()
     @LogAndValidate(validateRequest = false, logResponse = false)
     @PreAuthorize("hasAuthority('PROFILES.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
@@ -40,13 +42,15 @@ public class ProfileController {
         return profileService.findAll(applicationId).stream().map(profileModelAssembler::toModel).collect(Collectors.toSet());
     }
 
+    @Override
     @GetMapping("/{profileId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('PROFILES.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
-    public ProfileModel find(@PathVariable Long applicationId, @PathVariable Long profileId) throws ProfileNotFoundException, ApplicationNotFoundException {
+    public ProfileModel findById(@PathVariable Long applicationId, @PathVariable Long profileId) throws ProfileNotFoundException, ApplicationNotFoundException {
         return profileModelAssembler.toModel(profileService.findOrThrow(profileId, applicationId));
     }
 
+    @Override
     @PostMapping
     @LogAndValidate
     @ResponseStatus(HttpStatus.CREATED)
@@ -61,6 +65,7 @@ public class ProfileController {
         }
     }
 
+    @Override
     @PutMapping("/{profileId}")
     @LogAndValidate
     @PreAuthorize("hasAuthority('PROFILES.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
@@ -74,6 +79,7 @@ public class ProfileController {
         }
     }
 
+    @Override
     @DeleteMapping("/{profileId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('PROFILES.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")

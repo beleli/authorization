@@ -5,6 +5,7 @@ import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ApplicationModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ApplicationModel;
 import br.com.blitech.authorization.api.v1.model.input.ApplicationInputModel;
+import br.com.blitech.authorization.api.v1.openapi.ApplicationControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ApplicationAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entityinuse.ApplicationInUseException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/v1/applications", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ApplicationController {
+public class ApplicationController implements ApplicationControllerOpenApi {
 
     @Autowired
     private ApplicationModelAssembler applicationModelAssembler;
@@ -29,20 +30,23 @@ public class ApplicationController {
     @Autowired
     private ApplicationService applicationService;
 
-    @GetMapping()
+    @Override
+    @GetMapping
     @LogAndValidate(validateRequest = false, logResponse = false)
     @PreAuthorize("hasAuthority('APPLICATIONS.READ')")
     public Page<ApplicationModel> findAll(@PageableDefault() Pageable pageable) {
         return applicationService.findAll(pageable).map(applicationModelAssembler::toModel);
     }
 
+    @Override
     @GetMapping("/{applicationId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('APPLICATIONS.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
-    public ApplicationModel find(@PathVariable Long applicationId) throws ApplicationNotFoundException {
+    public ApplicationModel findById(@PathVariable Long applicationId) throws ApplicationNotFoundException {
         return applicationModelAssembler.toModel(applicationService.findOrThrow(applicationId));
     }
 
+    @Override
     @PostMapping
     @LogAndValidate
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,6 +57,7 @@ public class ApplicationController {
         return applicationModelAssembler.toModel(application);
     }
 
+    @Override
     @PutMapping("/{applicationId}")
     @LogAndValidate
     @PreAuthorize("hasAuthority('APPLICATIONS.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
@@ -62,6 +67,7 @@ public class ApplicationController {
         return applicationModelAssembler.toModel(changedApplication);
     }
 
+    @Override
     @DeleteMapping("/{applicationId} or @resourceUriHelper.isYourselfApplication(#applicationId)")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('APPLICATIONS.WRITE')")

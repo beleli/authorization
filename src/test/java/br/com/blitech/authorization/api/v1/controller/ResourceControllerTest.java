@@ -69,7 +69,7 @@ class ResourceControllerTest {
         when(resourceService.findOrThrow(anyLong())).thenReturn(resource);
         when(resourceModelAssembler.toModel(any())).thenReturn(resourceModel);
 
-        ResourceModel result = resourceController.find(1L);
+        ResourceModel result = resourceController.findById(1L);
 
         assertNotNull(result);
         assertEquals(resource.getName(), result.getName());

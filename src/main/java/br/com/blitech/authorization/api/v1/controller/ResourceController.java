@@ -5,6 +5,7 @@ import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ResourceModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ResourceModel;
 import br.com.blitech.authorization.api.v1.model.input.ResourceInputModel;
+import br.com.blitech.authorization.api.v1.openapi.ResourceControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ResourceAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entityinuse.ResourceInUseException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ResourceNotFoundException;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/v1/resources", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ResourceController {
+public class ResourceController implements ResourceControllerOpenApi {
 
     @Autowired
     private ResourceModelAssembler resourceModelAssembler;
@@ -29,6 +30,7 @@ public class ResourceController {
     @Autowired
     private ResourceService resourceService;
 
+    @Override
     @GetMapping()
     @LogAndValidate(validateRequest = false, logResponse = false)
     @PreAuthorize("hasAuthority('RESOURCES.READ')")
@@ -36,13 +38,15 @@ public class ResourceController {
         return resourceService.findAll(pageable).map(resourceModelAssembler::toModel);
     }
 
+    @Override
     @GetMapping("/{resourceId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('RESOURCES.READ')")
-    public ResourceModel find(@PathVariable Long resourceId) throws ResourceNotFoundException {
+    public ResourceModel findById(@PathVariable Long resourceId) throws ResourceNotFoundException {
         return resourceModelAssembler.toModel(resourceService.findOrThrow(resourceId));
     }
 
+    @Override
     @PostMapping
     @LogAndValidate
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,6 +57,7 @@ public class ResourceController {
         return resourceModelAssembler.toModel(resource);
     }
 
+    @Override
     @PutMapping("/{resourceId}")
     @LogAndValidate
     @PreAuthorize("hasAuthority('RESOURCES.WRITE')")
@@ -62,6 +67,7 @@ public class ResourceController {
         return resourceModelAssembler.toModel(changedResource);
     }
 
+    @Override
     @DeleteMapping("/{resourceId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('RESOURCES.WRITE')")

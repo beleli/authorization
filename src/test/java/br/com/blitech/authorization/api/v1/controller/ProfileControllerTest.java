@@ -67,7 +67,7 @@ class ProfileControllerTest {
         when(profileService.findOrThrow(anyLong(), anyLong())).thenReturn(profile);
         when(profileModelAssembler.toModel(any())).thenReturn(profileModel);
 
-        ProfileModel result = profileController.find(1L, 1L);
+        ProfileModel result = profileController.findById(1L, 1L);
 
         assertNotNull(result);
         assertEquals(profile.getName(), result.getName());

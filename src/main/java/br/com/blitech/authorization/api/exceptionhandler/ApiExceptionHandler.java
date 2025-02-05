@@ -14,10 +14,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mapping.PropertyReferenceException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -92,7 +90,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return this.handleExceptionInternal(ex, ex.getReason(), null, ex.getStatusCode(), request);
     }
 
-     @ExceptionHandler(AccessDeniedException.class)
+    @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
         return this.handleExceptionInternal(ex, null, null, HttpStatus.FORBIDDEN, request);
     }
@@ -129,6 +127,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
             newBody = buildApiError(statusCode, ex.getLocalizedMessage(), request, null);
         } else if (body instanceof String message) {
             newBody = buildApiError(statusCode, message, request, null);
+        } else if (body instanceof ProblemDetail problemDetail) {
+            newBody = buildApiError(statusCode, problemDetail.getDetail(), request, null);
         } else {
             newBody = body;
         }

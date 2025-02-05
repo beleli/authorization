@@ -69,7 +69,7 @@ class ApplicationControllerTest {
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
         when(applicationModelAssembler.toModel(any())).thenReturn(applicationModel);
 
-        ApplicationModel result = applicationController.find(1L);
+        ApplicationModel result = applicationController.findById(1L);
 
         assertNotNull(result);
         assertEquals(application.getName(), result.getName());

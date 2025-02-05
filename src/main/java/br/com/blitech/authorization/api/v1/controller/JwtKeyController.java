@@ -3,6 +3,7 @@ package br.com.blitech.authorization.api.v1.controller;
 import br.com.blitech.authorization.api.aspect.LogAndValidate;
 import br.com.blitech.authorization.api.aspect.RateLimit;
 import br.com.blitech.authorization.api.security.JwtKeyProvider;
+import br.com.blitech.authorization.api.v1.openapi.JwtKeyControllerOpenApi;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,11 +18,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/.well-known")
-public class JwtKeyController {
+public class JwtKeyController implements JwtKeyControllerOpenApi {
 
     @Autowired
     private JwtKeyProvider jwtKeyProvider;
 
+    @Override
     @RateLimit
     @LogAndValidate
     @GetMapping("/jwks.json")

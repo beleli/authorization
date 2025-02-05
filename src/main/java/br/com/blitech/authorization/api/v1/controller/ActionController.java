@@ -5,6 +5,7 @@ import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ActionModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ActionModel;
 import br.com.blitech.authorization.api.v1.model.input.ActionInputModel;
+import br.com.blitech.authorization.api.v1.openapi.ActionControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ActionAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entityinuse.ActionInUseException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/v1/actions", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ActionController {
+public class ActionController implements ActionControllerOpenApi {
 
     @Autowired
     private ActionService actionService;
@@ -29,6 +30,7 @@ public class ActionController {
     @Autowired
     private ActionModelAssembler actionModelAssembler;
 
+    @Override
     @GetMapping()
     @LogAndValidate(validateRequest = false, logResponse = false)
     @PreAuthorize("hasAuthority('ACTIONS.READ')")
@@ -36,13 +38,15 @@ public class ActionController {
         return actionService.findAll(pageable).map(actionModelAssembler::toModel);
     }
 
+    @Override
     @GetMapping("/{actionId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('ACTIONS.READ')")
-    public ActionModel find(@PathVariable Long actionId) throws ActionNotFoundException {
+    public ActionModel findById(@PathVariable Long actionId) throws ActionNotFoundException {
         return actionModelAssembler.toModel(actionService.findOrThrow(actionId));
     }
 
+    @Override
     @PostMapping
     @LogAndValidate
     @ResponseStatus(HttpStatus.CREATED)
@@ -53,6 +57,7 @@ public class ActionController {
         return actionModelAssembler.toModel(action);
     }
 
+    @Override
     @PutMapping("/{actionId}")
     @LogAndValidate
     @PreAuthorize("hasAuthority('ACTIONS.WRITE')")
@@ -62,6 +67,7 @@ public class ActionController {
         return actionModelAssembler.toModel(changedAction);
     }
 
+    @Override
     @DeleteMapping("/{actionId}")
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('ACTIONS.WRITE')")
