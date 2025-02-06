@@ -7,9 +7,6 @@ import br.com.blitech.authorization.domain.exception.alreadyexistsexception.Acti
 import br.com.blitech.authorization.domain.exception.entityinuse.ActionInUseException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
@@ -22,49 +19,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ActionControllerOpenApi {
 
     @PageableParameter
-    @Operation(
-        summary = "List all Actions",
-        responses = { @ApiResponse(responseCode = "200") }
-    )
+    @Operation(summary = "List all Actions")
     Page<ActionModel> findAll(@PageableDefault() Pageable pageable);
 
-    @Operation(
-        summary = "Find Action by Id",
-        responses = {
-
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError"))),
-            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Find Action by Id")
     ActionModel findById(@PathVariable Long actionId) throws ActionNotFoundException;
 
-    @Operation(
-        summary = "Insert a City",
-        responses = {
-            @ApiResponse(responseCode = "201"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Insert a City")
     ActionModel insert(@NotNull @RequestBody ActionInputModel actionInputModel) throws ActionAlreadyExistsException;
 
-    @Operation(
-        summary = "Update Action by Id",
-        responses = {
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError"))),
-            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Update Action by Id")
     ActionModel update(@PathVariable Long actionId, @NotNull @RequestBody ActionInputModel actionInputModel) throws ActionAlreadyExistsException, ActionNotFoundException;
 
-    @Operation(
-        summary = "Delete Action by Id",
-        responses = {
-            @ApiResponse(responseCode = "204"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError"))),
-            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Delete Action by Id")
     void delete(@PathVariable Long actionId) throws ActionNotFoundException, ActionInUseException;
 }

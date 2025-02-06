@@ -1,7 +1,6 @@
 package br.com.blitech.authorization.api.exceptionhandler;
 
 import br.com.blitech.authorization.core.log.Loggable;
-import br.com.blitech.authorization.core.log.MaskProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -9,6 +8,7 @@ import java.net.URI;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Schema(name = "ApiError", description = "Details about an API error")
 public class ApiError extends Loggable {
 
     @Schema(example = "Bad Request")
@@ -45,10 +45,11 @@ public class ApiError extends Loggable {
         this.errors = errors;
     }
 
-    public record ApiFieldError(
+    @Schema(name = "ApiFieldError", description = "Details about a specific field error")
+    public record ApiFieldError (
         @Schema(example = "name")
         String field,
         @Schema(example = "must not be blank")
         String error
-    ) { }
+    ){ }
 }

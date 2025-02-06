@@ -68,9 +68,9 @@ public class ApplicationController implements ApplicationControllerOpenApi {
     }
 
     @Override
-    @DeleteMapping("/{applicationId} or @resourceUriHelper.isYourselfApplication(#applicationId)")
+    @DeleteMapping("/{applicationId}")
     @LogAndValidate(validateRequest = false)
-    @PreAuthorize("hasAuthority('APPLICATIONS.WRITE')")
+    @PreAuthorize("hasAuthority('APPLICATIONS.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long applicationId) throws ApplicationNotFoundException, ApplicationInUseException {
         applicationService.delete(applicationId);

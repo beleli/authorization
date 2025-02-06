@@ -7,62 +7,30 @@ import br.com.blitech.authorization.domain.exception.alreadyexistsexception.Reso
 import br.com.blitech.authorization.domain.exception.entityinuse.ResourceInUseException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ResourceNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Resources")
 public interface ResourceControllerOpenApi {
 
     @PageableParameter
-    @Operation(
-        summary = "List all Resources",
-        responses = { @ApiResponse(responseCode = "200") }
-    )
+    @Operation(summary = "List all Resources")
     Page<ResourceModel> findAll(@PageableDefault() Pageable pageable);
 
-    @Operation(
-        summary = "Find Resource by Id",
-        responses = {
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError"))),
-            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Find Resource by Id")
     ResourceModel findById(@PathVariable Long resourceId) throws ResourceNotFoundException;
 
-    @Operation(
-        summary = "Insert a Resource",
-        responses = {
-            @ApiResponse(responseCode = "201"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Insert a Resource")
     ResourceModel insert(@NotNull @RequestBody ResourceInputModel resourceInputModel) throws ResourceAlreadyExistsException;
 
-    @Operation(
-        summary = "Update Resource by Id",
-        responses = {
-            @ApiResponse(responseCode = "200"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError"))),
-            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Update Resource by Id")
     ResourceModel update(@PathVariable Long resourceId, @NotNull @RequestBody ResourceInputModel resourceInputModel) throws ResourceAlreadyExistsException, ResourceNotFoundException;
 
-    @Operation(
-        summary = "Delete Resource by Id",
-        responses = {
-            @ApiResponse(responseCode = "204"),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(ref = "ApiError"))),
-            @ApiResponse(responseCode = "404", content = @Content(schema = @Schema(ref = "ApiError")))
-        }
-    )
+    @Operation(summary = "Delete Resource by Id")
     void delete(@PathVariable Long resourceId) throws ResourceNotFoundException, ResourceInUseException;
 }
