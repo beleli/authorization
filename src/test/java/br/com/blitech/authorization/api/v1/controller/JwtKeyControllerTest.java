@@ -10,7 +10,6 @@ import org.mockito.MockitoAnnotations;
 import java.math.BigInteger;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -41,25 +40,18 @@ class JwtKeyControllerTest {
 
     @Test
     void testGetJwks() {
-        var result = jwtKeyController.getJwks();
+        var key = jwtKeyController.getJwks();
 
-        assertNotNull(result);
-        assertTrue(result.containsKey("keys"));
-
-        var keys = (Iterable<?>) result.get("keys");
-        var iterator = keys.iterator();
-        assertTrue(iterator.hasNext());
-
-        var key = (Map<String, Object>) iterator.next();
-        assertEquals("RSA", key.get("kty"));
-        assertEquals("test-key-id", key.get("kid"));
-        assertEquals("RS256", key.get("alg"));
-        assertEquals("sig", key.get("use"));
+        assertNotNull(key);
+        assertEquals("RSA", key.getKty());
+        assertEquals("test-key-id", key.getKid());
+        assertEquals("RS256", key.getAlg());
+        assertEquals("sig", key.getUse());
         assertEquals(
                 Base64.getUrlEncoder().withoutPadding().encodeToString(new BigInteger(1, new byte[]{1, 2, 3, 4}).toByteArray()),
-                key.get("n"));
+                key.getN());
         assertEquals(
                 Base64.getUrlEncoder().withoutPadding().encodeToString(BigInteger.valueOf(65537).toByteArray()),
-                key.get("e"));
+                key.getE());
     }
 }
