@@ -1,8 +1,6 @@
 package br.com.blitech.authorization.api.v1.model;
 
-import br.com.blitech.authorization.core.log.LogMaskFormat;
 import br.com.blitech.authorization.core.log.Loggable;
-import br.com.blitech.authorization.core.log.MaskProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ApplicationModel extends Loggable {

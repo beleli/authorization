@@ -1,6 +1,6 @@
 package br.com.blitech.authorization.api.v1.controller;
 
-import br.com.blitech.authorization.api.aspect.LogAndValidate;
+import br.com.blitech.authorization.api.aspect.LogAndValidateAspect.LogAndValidate;
 import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ResourceModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ResourceModel;

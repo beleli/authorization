@@ -4,6 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
@@ -141,4 +145,19 @@ public abstract class Loggable {
     private interface LogFunction {
         String apply(Object obj);
     }
+
+    public enum LogMaskFormat {
+        DEFAULT,
+        CPF,
+        ADDRESS,
+        EMAIL,
+        NAME
+    }
+
+    @Target({ElementType.FIELD, ElementType.METHOD})
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface MaskProperty {
+        LogMaskFormat format() default LogMaskFormat.DEFAULT;
+    }
+
 }
