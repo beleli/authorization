@@ -159,5 +159,4 @@ public abstract class Loggable {
     public @interface MaskProperty {
         LogMaskFormat format() default LogMaskFormat.DEFAULT;
     }
-
 }
