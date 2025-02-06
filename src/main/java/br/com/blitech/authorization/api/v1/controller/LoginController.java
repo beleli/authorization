@@ -1,7 +1,7 @@
 package br.com.blitech.authorization.api.v1.controller;
 
-import br.com.blitech.authorization.api.aspect.LogAndValidate;
-import br.com.blitech.authorization.api.aspect.RateLimit;
+import br.com.blitech.authorization.api.aspect.LogAndValidateAspect.LogAndValidate;
+import br.com.blitech.authorization.api.aspect.RateLimitAspect.RateLimit;
 import br.com.blitech.authorization.api.security.JwtKeyProvider;
 import br.com.blitech.authorization.api.v1.model.LoginModel;
 import br.com.blitech.authorization.api.v1.model.input.LoginApplicationInputModel;

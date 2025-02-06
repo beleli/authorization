@@ -1,7 +1,6 @@
 package br.com.blitech.authorization.api.v1.model.input;
 
 import br.com.blitech.authorization.core.log.Loggable;
-import br.com.blitech.authorization.core.log.MaskProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;

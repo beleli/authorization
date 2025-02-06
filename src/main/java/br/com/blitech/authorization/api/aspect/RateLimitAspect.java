@@ -15,11 +15,16 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Component
@@ -75,4 +80,12 @@ public class RateLimitAspect {
     }
 
     private record RequestInfo(List<Long> requests) { }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface RateLimit {
+        int maxRequests() default 60;
+        long timeValue() default 5;
+        TimeUnit timeUnit() default TimeUnit.MINUTES;
+    }
 }
