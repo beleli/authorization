@@ -22,10 +22,10 @@ public abstract class Loggable {
     public String toLog() {
         Map<String, Object> propertiesMap = getProperties(this, Loggable::toLogSafely);
         return this.getClass().getSimpleName() + "(" +
-                propertiesMap.entrySet().stream()
-                        .map(entry -> entry.getKey() + "=" + entry.getValue())
-                        .collect(Collectors.joining(","))
-                + ")";
+            propertiesMap.entrySet().stream()
+                .map(entry -> entry.getKey() + "=" + entry.getValue())
+                .collect(Collectors.joining(","))
+            + ")";
     }
 
     public String toJsonLog() {
