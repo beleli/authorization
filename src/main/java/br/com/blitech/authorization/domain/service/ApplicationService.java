@@ -71,7 +71,7 @@ public class ApplicationService {
     @Transactional(rollbackFor = ApplicationInUseException.class)
     public void delete(Long id) throws ApplicationNotFoundException, ApplicationInUseException {
         try {
-            applicationRepository.delete(findOrThrow(id));
+            applicationRepository.delete(this.findOrThrow(id));
             applicationRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ApplicationInUseException();
@@ -80,7 +80,7 @@ public class ApplicationService {
 
     @Transactional(readOnly = true)
     public Set<String> getApplicationAuthorities(Long id) throws ApplicationNotFoundException {
-        var application = findOrThrow(id);
+        var application = this.findOrThrow(id);
 
         var authorities = new TreeSet<String>();
         for (ProfileResourceAction profileResourceAction : profileResourceActionRepository.findByProfileApplication(application)) {

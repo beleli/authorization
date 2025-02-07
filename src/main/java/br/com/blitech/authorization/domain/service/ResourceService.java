@@ -45,7 +45,7 @@ public class ResourceService {
     @Transactional(rollbackFor = ResourceInUseException.class)
     public void delete(Long id) throws ResourceNotFoundException, ResourceInUseException {
         try {
-            resourceRepository.delete(findOrThrow(id));
+            resourceRepository.delete(this.findOrThrow(id));
             resourceRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ResourceInUseException();

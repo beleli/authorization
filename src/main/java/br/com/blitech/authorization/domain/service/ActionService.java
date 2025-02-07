@@ -45,7 +45,7 @@ public class ActionService {
     @Transactional(rollbackFor = ActionInUseException.class)
     public void delete(Long id) throws ActionNotFoundException, ActionInUseException {
         try {
-            actionRepository.delete(findOrThrow(id));
+            actionRepository.delete(this.findOrThrow(id));
             actionRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ActionInUseException();
