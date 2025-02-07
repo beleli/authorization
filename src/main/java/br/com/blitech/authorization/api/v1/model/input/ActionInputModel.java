@@ -9,6 +9,7 @@ public class ActionInputModel implements Loggable {
 
     @NotBlank
     @Length(max = 255)
+    @Schema(description = "Action name", example = "CREATE")
     private String name;
 
     public String getName() { return name; }
