@@ -14,7 +14,6 @@ public class ResourceInputModel implements Loggable {
 
     public String getName() { return name; }
 
-    public ResourceInputModel(String name) {
-        this.name = name;
-    }
+    public ResourceInputModel(String name) { this.name = name; }
+    public ResourceInputModel() { }
 }

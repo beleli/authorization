@@ -24,10 +24,7 @@ public interface Loggable {
 
     default String toJsonLog() {
         try {
-            return objectMapper.writeValueAsString(getProperties(this, Loggable::toJsonLogSafely))
-                .replace("\"{", "{")
-                .replace("}\"", "}")
-                .replace("\\\"", "\"");
+            return compactJson(objectMapper.writeValueAsString(getProperties(this, Loggable::toJsonLogSafely)));
         } catch (Exception e) {
             throw new RuntimeException("Error serializing object to JSON log", e);
         }
@@ -109,6 +106,26 @@ public interface Loggable {
         return Arrays.stream(value.split(" "))
                 .map(part -> maskAfter(part, 2))
                 .collect(Collectors.joining(" "));
+    }
+
+    @NotNull
+    private String compactJson(@NotNull String json) {
+        StringBuilder result = new StringBuilder(json.length());
+        for (int i = 0; i < json.length(); i++) {
+            char ch = json.charAt(i);
+            if (ch == '\u0000' || ch == '\\') {
+                continue;
+            } else if (ch == '"' && i < json.length() - 1 && json.charAt(i + 1) == '{') {
+                result.append('{');
+                i++;
+            } else if (ch == '}' && i < json.length() - 1 && json.charAt(i + 1) == '"') {
+                result.append('}');
+                i++;
+            } else {
+                result.append(ch);
+            }
+        }
+        return result.toString();
     }
 
     enum LogMaskFormat {
