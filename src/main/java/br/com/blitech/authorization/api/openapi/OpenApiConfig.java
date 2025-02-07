@@ -30,6 +30,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 public class OpenApiConfig {
     private static final String CLIENT_ERROR_RESPONSE = "ClientErrorResponse";
+    private static final String API_ERROR = "ApiError";
+    private static final String API_FIELD_ERROR = "ApiError";
 
     @Bean
     public OpenAPI openAPI() {
@@ -66,8 +68,8 @@ public class OpenApiConfig {
     private Map<String, Schema> generateSchemas() {
         final Map<String, Schema> schemaMap = new HashMap<>();
 
-        schemaMap.put("ApiError", ModelConverters.getInstance().read(ApiError.class).get("ApiError"));
-        schemaMap.put("ApiFieldError", ModelConverters.getInstance().read(ApiError.ApiFieldError.class).get("ApiFieldError"));
+        schemaMap.put(API_ERROR, ModelConverters.getInstance().read(ApiError.class).get(API_ERROR));
+        schemaMap.put(API_FIELD_ERROR, ModelConverters.getInstance().read(ApiError.ApiFieldError.class).get(API_FIELD_ERROR));
 
         return schemaMap;
     }
@@ -75,7 +77,7 @@ public class OpenApiConfig {
     @NotNull
     private Map<String, ApiResponse> generateResponses() {
         final Map<String, ApiResponse> apiResponseMap = new HashMap<>();
-        Content content = new Content().addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(new Schema<ApiError>().$ref("ApiError")));
+        Content content = new Content().addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(new Schema<ApiError>().$ref(API_ERROR)));
 
         apiResponseMap.put(CLIENT_ERROR_RESPONSE, new ApiResponse().description("Client Error").content(content));
 

@@ -42,7 +42,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public Profile findOrThrow(Long id, Long applicationId) throws ApplicationNotFoundException, ProfileNotFoundException {
         var application = applicationService.findOrThrow(applicationId);
-        return findOrThrow(id, application);
+        return this.findOrThrow(id, application);
     }
 
     @Transactional(readOnly = true)
@@ -74,7 +74,7 @@ public class ProfileService {
     public void delete(Long applicationId, Long id) throws ApplicationNotFoundException, ProfileNotFoundException, ProfileInUseException {
         try {
             var application = applicationService.findOrThrow(applicationId);
-            profileRepository.delete(findOrThrow(id, application));
+            profileRepository.delete(this.findOrThrow(id, application));
             profileRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ProfileInUseException();
