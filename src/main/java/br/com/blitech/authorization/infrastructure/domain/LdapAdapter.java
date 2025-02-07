@@ -20,12 +20,14 @@ import static org.springframework.ldap.query.LdapQueryBuilder.query;
 @Component
 public class LdapAdapter implements DomainService {
     public static final String S_AM_ACCOUNT_NAME = "sAMAccountName";
+    private final LdapProperties ldapProperties;
+    private final LdapTemplate ldapTemplate;
 
     @Autowired
-    private LdapProperties ldapProperties;
-
-    @Autowired
-    private LdapTemplate ldapTemplate;
+    public LdapAdapter(LdapProperties ldapProperties, LdapTemplate ldapTemplate) {
+        this.ldapProperties = ldapProperties;
+        this.ldapTemplate = ldapTemplate;
+    }
 
     @Override
     public Boolean authenticate(String username, String password) {
