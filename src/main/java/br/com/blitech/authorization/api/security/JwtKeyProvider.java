@@ -2,6 +2,7 @@ package br.com.blitech.authorization.api.security;
 
 import br.com.blitech.authorization.core.properties.JwtKeyStoreProperties;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -18,10 +19,7 @@ public class JwtKeyProvider {
     private final PublicKey publicKey;
     private final String keyId;
 
-    public Key getKey() { return key; }
-    public PublicKey getPublicKey() { return publicKey; }
-    public String getKeyId() { return keyId; }
-
+    @Autowired
     public JwtKeyProvider(@NotNull JwtKeyStoreProperties properties) {
         this.properties = properties;
         this.keyStore = loadKeyStore();
@@ -29,6 +27,10 @@ public class JwtKeyProvider {
         this.publicKey = loadPublicKey();
         this.keyId = properties.getKeypairAlias();
     }
+
+    public Key getKey() { return key; }
+    public PublicKey getPublicKey() { return publicKey; }
+    public String getKeyId() { return keyId; }
 
     @NotNull
     private KeyStore loadKeyStore() {

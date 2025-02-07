@@ -29,9 +29,12 @@ import java.util.concurrent.TimeUnit;
 @Aspect
 @Component
 public class RateLimitAspect {
+    private final CacheService cacheService;
 
     @Autowired
-    private CacheService cacheService;
+    public RateLimitAspect(CacheService cacheService) {
+        this.cacheService = cacheService;
+    }
 
     @Pointcut("@annotation(rateLimit)")
     public void validateMethod(RateLimit rateLimit) {

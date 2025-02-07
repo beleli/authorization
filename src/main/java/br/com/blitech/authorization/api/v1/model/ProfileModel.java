@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Set;
 
-public class ProfileModel extends Loggable {
+public class ProfileModel implements Loggable {
 
     @Schema(description = "Profile id", example = "1")
     private Long profileId;

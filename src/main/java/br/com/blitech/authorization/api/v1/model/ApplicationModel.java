@@ -3,7 +3,7 @@ package br.com.blitech.authorization.api.v1.model;
 import br.com.blitech.authorization.core.log.Loggable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class ApplicationModel extends Loggable {
+public class ApplicationModel implements Loggable {
 
     @Schema(description = "Application id", example = "1")
     private Long applicationId;

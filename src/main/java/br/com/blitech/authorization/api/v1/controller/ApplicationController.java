@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/v1/applications", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ApplicationController implements ApplicationControllerOpenApi {
+    private final ApplicationModelAssembler applicationModelAssembler;
+    private final ApplicationService applicationService;
 
     @Autowired
-    private ApplicationModelAssembler applicationModelAssembler;
-
-    @Autowired
-    private ApplicationService applicationService;
+    public ApplicationController(ApplicationModelAssembler applicationModelAssembler, ApplicationService applicationService) {
+        this.applicationModelAssembler = applicationModelAssembler;
+        this.applicationService = applicationService;
+    }
 
     @Override
     @GetMapping

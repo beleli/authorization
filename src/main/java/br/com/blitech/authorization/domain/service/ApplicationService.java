@@ -22,15 +22,16 @@ import java.util.TreeSet;
 
 @Service
 public class ApplicationService {
+    private final ApplicationRepository applicationRepository;
+    private final ProfileResourceActionRepository profileResourceActionRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ApplicationRepository applicationRepository;
-
-    @Autowired
-    private ProfileResourceActionRepository profileResourceActionRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public ApplicationService(ApplicationRepository applicationRepository, ProfileResourceActionRepository profileResourceActionRepository, PasswordEncoder passwordEncoder) {
+        this.applicationRepository = applicationRepository;
+        this.profileResourceActionRepository = profileResourceActionRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Transactional(readOnly = true)
     public Application findOrThrow(Long id) throws ApplicationNotFoundException {

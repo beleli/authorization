@@ -3,7 +3,7 @@ package br.com.blitech.authorization.api.v1.model;
 import br.com.blitech.authorization.core.log.Loggable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public class ActionModel extends Loggable {
+public class ActionModel implements Loggable {
 
     @Schema(description = "Action id", example = "1")
     private final Long actionId;

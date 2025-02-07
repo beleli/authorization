@@ -29,15 +29,16 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/v1/login", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController implements LoginControllerOpenApi {
+    private final JwtKeyProvider jwtKeyProvider;
+    private final ApplicationService applicationService;
+    private final UserService userService;
 
     @Autowired
-    private JwtKeyProvider jwtKeyProvider;
-
-    @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
-    private UserService userService;
+    public LoginController(JwtKeyProvider jwtKeyProvider, ApplicationService applicationService, UserService userService) {
+        this.jwtKeyProvider = jwtKeyProvider;
+        this.applicationService = applicationService;
+        this.userService = userService;
+    }
 
     @Override
     @RateLimit

@@ -15,10 +15,9 @@ import java.net.URI;
 @Configuration
 @EnableConfigurationProperties(SecretsManagerProperties.class)
 public class SecretsManagerConfig {
+    private final SecretsManagerProperties secretsManagerProperties;
 
     @Autowired
-    private SecretsManagerProperties secretsManagerProperties;
-
     public SecretsManagerConfig(SecretsManagerProperties secretsManagerProperties) {
         this.secretsManagerProperties = secretsManagerProperties;
     }

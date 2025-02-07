@@ -23,15 +23,16 @@ import java.util.Set;
 
 @Service
 public class ProfileService {
+    private final ApplicationService applicationService;
+    private final ProfileRepository profileRepository;
+    private final ProfileResourceActionRepository profileResourceActionRepository;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
-    private ProfileRepository profileRepository;
-
-    @Autowired
-    private ProfileResourceActionRepository profileResourceActionRepository;
+    public ProfileService(ApplicationService applicationService, ProfileRepository profileRepository, ProfileResourceActionRepository profileResourceActionRepository) {
+        this.applicationService = applicationService;
+        this.profileRepository = profileRepository;
+        this.profileResourceActionRepository = profileResourceActionRepository;
+    }
 
     @Transactional(readOnly = true)
     public Set<Profile> findAll(Long applicationId) throws ApplicationNotFoundException {

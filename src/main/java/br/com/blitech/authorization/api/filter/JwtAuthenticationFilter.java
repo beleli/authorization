@@ -24,9 +24,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class JwtAuthenticationFilter extends GenericFilterBean {
+    private final JwtKeyProvider jwtKeyProvider;
 
-    @Autowired
-    private JwtKeyProvider jwtKeyProvider;
+    public JwtAuthenticationFilter(JwtKeyProvider jwtKeyProvider) {
+        this.jwtKeyProvider = jwtKeyProvider;
+    }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) {
