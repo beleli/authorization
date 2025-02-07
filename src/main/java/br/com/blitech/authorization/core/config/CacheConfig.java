@@ -17,12 +17,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 @EnableConfigurationProperties(CacheProperties.class)
 public class CacheConfig {
+    private final CacheProperties cacheProperties;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    private CacheProperties cacheProperties;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+    public CacheConfig(CacheProperties cacheProperties, ObjectMapper objectMapper) {
+        this.cacheProperties = cacheProperties;
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public CacheService cacheService() {

@@ -35,9 +35,12 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
+    private final Tracer tracer;
 
     @Autowired
-    private Tracer tracer;
+    public ApiExceptionHandler(Tracer tracer) {
+        this.tracer = tracer;
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUncaughtException(Exception ex, WebRequest request) {

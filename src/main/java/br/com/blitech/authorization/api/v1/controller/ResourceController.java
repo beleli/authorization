@@ -23,12 +23,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping(path = "/v1/resources", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ResourceController implements ResourceControllerOpenApi {
+    private final ResourceModelAssembler resourceModelAssembler;
+    private final ResourceService resourceService;
 
     @Autowired
-    private ResourceModelAssembler resourceModelAssembler;
-
-    @Autowired
-    private ResourceService resourceService;
+    public ResourceController(ResourceModelAssembler resourceModelAssembler, ResourceService resourceService) {
+        this.resourceModelAssembler = resourceModelAssembler;
+        this.resourceService = resourceService;
+    }
 
     @Override
     @GetMapping()

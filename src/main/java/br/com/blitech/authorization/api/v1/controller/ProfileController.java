@@ -7,13 +7,11 @@ import br.com.blitech.authorization.api.v1.model.ProfileModel;
 import br.com.blitech.authorization.api.v1.model.input.ProfileInputModel;
 import br.com.blitech.authorization.api.v1.openapi.ProfileControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.BusinessException;
-import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ProfileAlreadyExistsException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ActionNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ResourceNotFoundException;
 import br.com.blitech.authorization.domain.service.ProfileService;
-import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,12 +25,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/v1/applications/{applicationId}/profiles", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileController implements ProfileControllerOpenApi {
+    private final ProfileModelAssembler profileModelAssembler;
+    private final ProfileService profileService;
 
     @Autowired
-    ProfileModelAssembler profileModelAssembler;
-
-    @Autowired
-    private ProfileService profileService;
+    public ProfileController(ProfileModelAssembler profileModelAssembler, ProfileService profileService) {
+        this.profileModelAssembler = profileModelAssembler;
+        this.profileService = profileService;
+    }
 
     @Override
     @GetMapping()

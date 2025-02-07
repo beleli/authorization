@@ -15,14 +15,16 @@ import java.util.TreeSet;
 
 @Service
 public class UserService {
-    @Autowired
-    private DomainService domainService;
+    private final DomainService domainService;
+    private final ApplicationService applicationService;
+    private final ProfileResourceActionRepository profileResourceActionRepository;
 
     @Autowired
-    private ApplicationService applicationService;
-
-    @Autowired
-    private ProfileResourceActionRepository profileResourceActionRepository;
+    public UserService(DomainService domainService, ApplicationService applicationService, ProfileResourceActionRepository profileResourceActionRepository) {
+        this.domainService = domainService;
+        this.applicationService = applicationService;
+        this.profileResourceActionRepository = profileResourceActionRepository;
+    }
 
     @Transactional(readOnly = true)
     public Set<String> getUserAuthorities(Application application, String username, String password) throws UserInvalidPasswordException, ApplicationNotFoundException {

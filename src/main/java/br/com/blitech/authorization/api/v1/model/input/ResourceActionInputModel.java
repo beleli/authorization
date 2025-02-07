@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
-public class ResourceActionInputModel extends Loggable {
+public class ResourceActionInputModel implements Loggable {
 
     @Schema(description = "Resource id", example = "1")
     private Long resourceId;

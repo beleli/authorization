@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class ProfileInputModel extends Loggable {
+public class ProfileInputModel implements Loggable {
 
     @NotBlank
     @Length(max = 255)

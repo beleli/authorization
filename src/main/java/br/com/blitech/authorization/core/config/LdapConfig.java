@@ -14,9 +14,12 @@ import java.io.IOException;
 @Configuration
 @EnableConfigurationProperties(LdapProperties.class)
 public class LdapConfig {
+    private LdapProperties ldapProperties;
 
     @Autowired
-    private LdapProperties ldapProperties;
+    public LdapConfig(LdapProperties ldapProperties) {
+        this.ldapProperties = ldapProperties;
+    }
 
     @Bean
     public LdapContextSource ldapContextSource() throws IOException {

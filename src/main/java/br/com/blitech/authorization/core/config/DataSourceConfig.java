@@ -14,12 +14,14 @@ import javax.sql.DataSource;
 @Configuration
 @EnableConfigurationProperties(DataSourceProperties.class)
 public class DataSourceConfig {
+    private final Environment environment;
+    private final DataSourceProperties dataSourceProperties;
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
-    private DataSourceProperties dataSourceProperties;
+    public DataSourceConfig(Environment environment, DataSourceProperties dataSourceProperties) {
+        this.environment = environment;
+        this.dataSourceProperties = dataSourceProperties;
+    }
 
     @Bean
     public DataSource dataSource() {

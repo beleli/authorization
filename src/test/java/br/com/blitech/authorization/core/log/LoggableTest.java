@@ -40,7 +40,7 @@ class LoggableTest {
         assertTrue(jsonLog.contains("\"token\":\"*****\""));
     }
 
-    static class TestLoggable extends Loggable {
+    static class TestLoggable implements Loggable {
         @MaskProperty(format = LogMaskFormat.NAME)
         private String name = "John Doe";
         @MaskProperty(format = LogMaskFormat.EMAIL)

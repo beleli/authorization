@@ -18,9 +18,12 @@ import java.net.URI;
 
 @Component
 public class ResourceUriHelper {
+	private final ApplicationService applicationService;
 
 	@Autowired
-	private ApplicationService applicationService;
+	public ResourceUriHelper(ApplicationService applicationService) {
+		this.applicationService = applicationService;
+	}
 
 	public static void addUriInResponseHeader(Object resourceId) {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri()

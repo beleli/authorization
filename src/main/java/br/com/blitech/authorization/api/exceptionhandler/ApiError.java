@@ -9,7 +9,7 @@ import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Schema(name = "ApiError", description = "Details about an API error")
-public class ApiError extends Loggable {
+public class ApiError implements Loggable {
 
     @Schema(example = "Bad Request")
     private final String title;

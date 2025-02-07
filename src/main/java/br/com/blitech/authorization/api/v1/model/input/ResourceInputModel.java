@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-public class ResourceInputModel extends Loggable {
+public class ResourceInputModel implements Loggable {
 
     @NotBlank
     @Length(max = 255)
@@ -14,7 +14,6 @@ public class ResourceInputModel extends Loggable {
 
     public String getName() { return name; }
 
-    public ResourceInputModel(String name) {
-        this.name = name;
-    }
+    public ResourceInputModel(String name) { this.name = name; }
+    public ResourceInputModel() { }
 }

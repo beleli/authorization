@@ -14,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ActionService {
+    private final ActionRepository actionRepository;
 
     @Autowired
-    private ActionRepository actionRepository;
+    public ActionService(ActionRepository actionRepository) {
+        this.actionRepository = actionRepository;
+    }
 
     @Transactional(readOnly = true)
     public Action findOrThrow(Long id) throws ActionNotFoundException {

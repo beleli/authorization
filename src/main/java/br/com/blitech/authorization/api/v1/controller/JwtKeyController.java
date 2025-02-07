@@ -18,9 +18,12 @@ import java.util.Base64;
 @RestController
 @RequestMapping("/.well-known")
 public class JwtKeyController implements JwtKeyControllerOpenApi {
+    private JwtKeyProvider jwtKeyProvider;
 
     @Autowired
-    private JwtKeyProvider jwtKeyProvider;
+    public JwtKeyController(JwtKeyProvider jwtKeyProvider) {
+        this.jwtKeyProvider = jwtKeyProvider;
+    }
 
     @Override
     @RateLimit

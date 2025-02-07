@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-public class ApplicationInputModel extends Loggable {
+public class ApplicationInputModel implements Loggable {
 
     @NotBlank
     @Length(max = 255)
