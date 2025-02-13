@@ -35,10 +35,9 @@ class MemoryAdapterTest {
     void testGetKeyExpired() throws InterruptedException {
         String key = "testKey";
         String value = "testValue";
-        Duration duration = Duration.ofSeconds(1);
+        Duration duration = Duration.ofSeconds(-1);
 
         memoryAdapter.setKey(key, value, duration);
-        Thread.sleep(2000); // Wait for the key to expire
         String result = memoryAdapter.getKey(key, String.class);
 
         assertNull(result);
