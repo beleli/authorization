@@ -34,7 +34,7 @@ public class JwtResourceConfig {
     @Bean
     public SecurityFilterChain resourceServerFilterChain(@NotNull HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/**"))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> {
                 auth.requestMatchers(WHITE_LIST).permitAll();
