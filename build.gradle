@@ -1,5 +1,6 @@
 plugins {
 	id 'java'
+	id 'jacoco'
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
     id 'org.jetbrains.kotlin.jvm'
@@ -52,4 +53,10 @@ tasks.named('test') {
 	useJUnitPlatform()
 	environment("AUTHORIZATION_SECRETS_MANAGER_IMPL", "localstack")
 	environment("SPRING_PROFILES_ACTIVE", "test")
+}
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+	}
 }
