@@ -90,8 +90,8 @@ public class ServiceUserService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getAuthorities(Long applicationId, Long id) throws ApplicationNotFoundException, ServiceUserNotFoundException, ProfileNotFoundException {
-        var serviceUser = this.findOrThrow(applicationId, id);
+    public Set<String> getAuthorities(Long id, Long applicationId) throws ApplicationNotFoundException, ServiceUserNotFoundException, ProfileNotFoundException {
+        var serviceUser = this.findOrThrow(id, applicationId);
         Set<String> authorities;
 
         if (serviceUser.getProfile() == null) {

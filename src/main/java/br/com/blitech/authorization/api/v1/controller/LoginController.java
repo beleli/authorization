@@ -84,7 +84,7 @@ public class LoginController implements LoginControllerOpenApi {
     public LoginModel loginServiceUser(@NotNull @RequestBody LoginUserInputModel loginUserInputModel) throws BusinessException {
         try {
             var user = serviceUserService.validateLogin(loginUserInputModel.getApplication(), loginUserInputModel.getUsername(), loginUserInputModel.getPassword());
-            var authorities = serviceUserService.getAuthorities(user.getApplication().getId(), user.getApplication().getId());
+            var authorities = serviceUserService.getAuthorities(user.getId(), user.getApplication().getId());
             return new LoginModel(generateToken(loginUserInputModel.getUsername(), user.getApplication().getName(), authorities));
         } catch (UserInvalidPasswordException e) {
             throw new UserNotAuthorizedException();
