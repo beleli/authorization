@@ -41,12 +41,7 @@ public class ServiceUserService {
     @Transactional(readOnly = true)
     public ServiceUser findOrThrow(Long id, Long applicationId) throws ApplicationNotFoundException, ServiceUserNotFoundException {
         var application = applicationService.findOrThrow(applicationId);
-        return this.findOrThrow(id, application);
-    }
-
-    @Transactional(readOnly = true)
-    public ServiceUser findOrThrow(Long id, @NotNull Application application) throws ApplicationNotFoundException, ServiceUserNotFoundException {
-        return serviceUserRepository.findByIdAndApplicationId(id, application.getId()).orElseThrow(ServiceUserNotFoundException::new);
+        return this.internalFindOrThrow(id, application.getId());
     }
 
     @Transactional(rollbackFor = {ServiceUserAlreadyExistsException.class, EntityNotFoundException.class})
@@ -74,7 +69,7 @@ public class ServiceUserService {
     public void delete(Long applicationId, Long id) throws ApplicationNotFoundException, ServiceUserNotFoundException, ServiceUserInUseException {
         try {
             var application = applicationService.findOrThrow(applicationId);
-            serviceUserRepository.delete(this.findOrThrow(id, application));
+            serviceUserRepository.delete(this.internalFindOrThrow(id, application.getId()));
             serviceUserRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ServiceUserInUseException();
@@ -91,7 +86,8 @@ public class ServiceUserService {
 
     @Transactional(readOnly = true)
     public Set<String> getAuthorities(Long id, Long applicationId) throws ApplicationNotFoundException, ServiceUserNotFoundException, ProfileNotFoundException {
-        var serviceUser = this.findOrThrow(id, applicationId);
+        var application = applicationService.findOrThrow(applicationId);
+        var serviceUser = this.internalFindOrThrow(id, application.getId());
         Set<String> authorities;
 
         if (serviceUser.getProfile() == null) {
@@ -101,5 +97,9 @@ public class ServiceUserService {
         }
 
         return authorities;
+    }
+
+    private ServiceUser internalFindOrThrow(Long id, Long applicationId) throws ServiceUserNotFoundException {
+        return serviceUserRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(ServiceUserNotFoundException::new);
     }
 }
