@@ -10,4 +10,6 @@ public abstract class BaseEntity {
     protected String setString(String value) {
         return setString(value, true);
     }
+
+    protected void normalizeFields() { }
 }

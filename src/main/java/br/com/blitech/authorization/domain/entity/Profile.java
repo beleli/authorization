@@ -49,18 +49,7 @@ public class Profile extends UpdateControl {
     public Profile() { }
 
     @Override
-    protected void prePersist() {
-        normalizeFields();
-        super.prePersist();
-    }
-
-    @Override
-    protected void preUpdate() {
-        normalizeFields();
-        super.preUpdate();
-    }
-
-    private void normalizeFields() {
+    protected void normalizeFields() {
         this.name = setString(name);
         this.group = setString(group, false);
     }

@@ -52,18 +52,7 @@ public class Application extends UpdateControl{
     public Application() { }
 
     @Override
-    protected void prePersist() {
-        normalizeFields();
-        super.prePersist();
-    }
-
-    @Override
-    protected void preUpdate() {
-        normalizeFields();
-        super.preUpdate();
-    }
-
-    private void normalizeFields() {
+    protected void normalizeFields() {
         this.name = setString(name);
         this.user = setString(user);
     }
