@@ -50,14 +50,14 @@ class LoginControllerTest {
         LoginApplicationInputModel loginApplicationInputModel = createLoginApplicationInputModel();
         var application = createApplication();
         when(applicationService.validateLogin(any(), any())).thenReturn(application);
-        when(applicationService.getApplicationAuthorities(any())).thenReturn(Set.of("RESOURCE.ACTION"));
+        when(applicationService.getAuthorities(any())).thenReturn(Set.of("RESOURCE.ACTION"));
 
         LoginModel result = loginController.loginApplication(loginApplicationInputModel);
 
         assertNotNull(result);
         assertNotNull(result.getToken());
         verify(applicationService, times(1)).validateLogin(any(), any());
-        verify(applicationService, times(1)).getApplicationAuthorities(any());
+        verify(applicationService, times(1)).getAuthorities(any());
     }
 
     @Test
@@ -65,13 +65,13 @@ class LoginControllerTest {
         LoginUserInputModel loginUserInputModel = createLoginUserInputModel();
         var application = createApplication();
         when(applicationService.findByNameOrThrow(any())).thenReturn(application);
-        when(userService.getUserAuthorities(any(), any(), any())).thenReturn(Set.of("RESOURCE.ACTION"));
+        when(userService.getAuthorities(any(), any(), any())).thenReturn(Set.of("RESOURCE.ACTION"));
 
         LoginModel result = loginController.loginUser(loginUserInputModel);
 
         assertNotNull(result);
         assertNotNull(result.getToken());
         verify(applicationService, times(1)).findByNameOrThrow(any());
-        verify(userService, times(1)).getUserAuthorities(any(), any(), any());
+        verify(userService, times(1)).getAuthorities(any(), any(), any());
     }
 }

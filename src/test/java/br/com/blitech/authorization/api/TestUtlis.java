@@ -43,7 +43,7 @@ public class TestUtlis {
 
     @NotNull
     public static ApplicationInputModel createApplicationInputModel() {
-        return new ApplicationInputModel("application", "token", "user", "password");
+        return new ApplicationInputModel("application", "user", "password");
     }
 
     @NotNull
@@ -74,6 +74,16 @@ public class TestUtlis {
     @NotNull
     public static ProfileInputModel createProfileInputModel() {
         return new ProfileInputModel("profile", "group", listOf(createResourceActionInputModel()));
+    }
+
+    @NotNull
+    public static ServiceUserModel createServiceUserModel() {
+        return new ServiceUserModel(1L, "user", "profile");
+    }
+
+    @NotNull
+    public static ServiceUserInputModel createServiceUserInputModel() {
+        return new ServiceUserInputModel("user",1L,  "password");
     }
 
     @NotNull

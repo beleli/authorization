@@ -44,6 +44,8 @@ public class Profile extends UpdateControl {
         this.group = setString(group, false);
     }
 
+    public Profile(Long id) { this.id = id; }
+
     public Profile() { }
 
     @Override

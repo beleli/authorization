@@ -82,8 +82,8 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getProfileAuthorities(String name) throws ProfileNotFoundException {
-        Optional<Profile> profile = profileRepository.findByName(name);
+    public Set<String> getAuthorities(Long id) throws ProfileNotFoundException {
+        Optional<Profile> profile = profileRepository.findById(id);
         if (profile.isEmpty()) throw new ProfileNotFoundException();
 
         Set<String> authorities = new HashSet<>();

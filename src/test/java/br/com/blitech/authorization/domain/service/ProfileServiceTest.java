@@ -137,17 +137,16 @@ class ProfileServiceTest {
     }
 
     @Test
-    void testGetProfileAuthorities() throws ProfileNotFoundException {
-        String profileName = "testProfile";
+    void testGetAuthorities() throws ProfileNotFoundException {
         Profile profile = createProfile();
         ProfileResourceAction action = createProfileResourceAction();
-        when(profileRepository.findByName(profileName)).thenReturn(Optional.of(profile));
+        when(profileRepository.findById(any())).thenReturn(Optional.of(profile));
         when(profileResourceActionRepository.findByProfile(profile)).thenReturn(Collections.singletonList(action));
 
-        Set<String> authorities = profileService.getProfileAuthorities(profileName);
+        Set<String> authorities = profileService.getAuthorities(1L);
         assertTrue(authorities.contains("RESOURCE.ACTION"));
 
-        when(profileRepository.findByName(profileName)).thenReturn(Optional.empty());
-        assertThrows(ProfileNotFoundException.class, () -> profileService.getProfileAuthorities(profileName));
+        when(profileRepository.findById(any())).thenReturn(Optional.empty());
+        assertThrows(ProfileNotFoundException.class, () -> profileService.getAuthorities(1L));
     }
 }

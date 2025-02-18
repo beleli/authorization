@@ -79,7 +79,7 @@ public class ApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getApplicationAuthorities(Long id) throws ApplicationNotFoundException {
+    public Set<String> getAuthorities(Long id) throws ApplicationNotFoundException {
         var application = this.findOrThrow(id);
 
         var authorities = new TreeSet<String>();

@@ -34,7 +34,6 @@ class ApplicationRepositoryTest {
     void testSaveApplication() {
         Application newApplication = new Application();
         newApplication.setName("NewApplication");
-        newApplication.setToken("NewToken");
         newApplication.setUser("NewUser");
         newApplication.setPassword("NewPassword");
         Application savedApplication = applicationRepository.save(newApplication);

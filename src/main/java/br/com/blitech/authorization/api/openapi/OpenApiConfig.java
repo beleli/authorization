@@ -31,7 +31,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class OpenApiConfig {
     private static final String CLIENT_ERROR_RESPONSE = "ClientErrorResponse";
     private static final String API_ERROR = "ApiError";
-    private static final String API_FIELD_ERROR = "ApiError";
+    private static final String API_FIELD_ERROR = "ApiFieldError";
 
     @Bean
     public OpenAPI openAPI() {
@@ -47,6 +47,7 @@ public class OpenApiConfig {
                 new Tag().name("Applications").description("Applications Management"),
                 new Tag().name("Profiles").description("Profiles Management"),
                 new Tag().name("Resources").description("Resources Management"),
+                new Tag().name("Service Users").description("Service Users Management"),
                 new Tag().name("JwtKey").description("Provide JWT Public Key")
             )).components(new Components()
                 .schemas(generateSchemas())

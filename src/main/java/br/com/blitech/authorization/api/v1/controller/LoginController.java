@@ -12,6 +12,7 @@ import br.com.blitech.authorization.domain.exception.business.UserInvalidPasswor
 import br.com.blitech.authorization.domain.exception.business.UserNotAuthorizedException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.service.ApplicationService;
+import br.com.blitech.authorization.domain.service.ServiceUserService;
 import br.com.blitech.authorization.domain.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,13 +32,15 @@ import java.util.stream.Collectors;
 public class LoginController implements LoginControllerOpenApi {
     private final JwtKeyProvider jwtKeyProvider;
     private final ApplicationService applicationService;
+    private final ServiceUserService serviceUserService;
     private final UserService userService;
 
     @Autowired
-    public LoginController(JwtKeyProvider jwtKeyProvider, ApplicationService applicationService, UserService userService) {
+    public LoginController(JwtKeyProvider jwtKeyProvider, ApplicationService applicationService, UserService userService, ServiceUserService serviceUserService) {
         this.jwtKeyProvider = jwtKeyProvider;
         this.applicationService = applicationService;
         this.userService = userService;
+        this.serviceUserService = serviceUserService;
     }
 
     @Override
@@ -47,7 +50,7 @@ public class LoginController implements LoginControllerOpenApi {
     public LoginModel loginApplication(@NotNull @RequestBody LoginApplicationInputModel loginApplicationInputModel) throws UserNotAuthorizedException {
         try {
             var application = applicationService.validateLogin(loginApplicationInputModel.getUsername(), loginApplicationInputModel.getPassword());
-            var authorities = applicationService.getApplicationAuthorities(application.getId());
+            var authorities = applicationService.getAuthorities(application.getId());
             return new LoginModel(generateToken(application.getUser(), application.getName(), authorities));
         } catch (ApplicationNotFoundException | UserInvalidPasswordException e) {
             throw new UserNotAuthorizedException();
@@ -61,7 +64,7 @@ public class LoginController implements LoginControllerOpenApi {
     public LoginModel loginUser(@NotNull @RequestBody LoginUserInputModel loginUserInputModel) throws BusinessException {
         try {
             var application = applicationService.findByNameOrThrow(loginUserInputModel.getApplication());
-            var authorities = userService.getUserAuthorities(
+            var authorities = userService.getAuthorities(
                     application,
                     loginUserInputModel.getUsername(),
                     loginUserInputModel.getPassword()
@@ -74,7 +77,23 @@ public class LoginController implements LoginControllerOpenApi {
         }
     }
 
-    private String generateToken(String email, String application, Set<String> authorities) {
+    @Override
+    @RateLimit
+    @LogAndValidate
+    @PostMapping("/service-user")
+    public LoginModel loginServiceUser(@NotNull @RequestBody LoginUserInputModel loginUserInputModel) throws BusinessException {
+        try {
+            var user = serviceUserService.validateLogin(loginUserInputModel.getApplication(), loginUserInputModel.getUsername(), loginUserInputModel.getPassword());
+            var authorities = serviceUserService.getAuthorities(user.getApplication().getId(), user.getApplication().getId());
+            return new LoginModel(generateToken(loginUserInputModel.getUsername(), user.getApplication().getName(), authorities));
+        } catch (UserInvalidPasswordException e) {
+            throw new UserNotAuthorizedException();
+        } catch (ApplicationNotFoundException e) {
+            throw new BusinessException(e.getMessage());
+        }
+    }
+
+    private String generateToken(String email, String application, @NotNull Set<String> authorities) {
         Date date = new Date();
         Date expiration = new Date(date.getTime() + 3600000);
 
@@ -86,8 +105,8 @@ public class LoginController implements LoginControllerOpenApi {
             .collect(Collectors.toSet());
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("scopes", scopes);
-        claims.put("authorities", authorities);
+        claims.put("scopes", sortSet(scopes));
+        claims.put("authorities", sortSet(authorities));
         claims.put("application", application);
 
         return Jwts.builder()
@@ -98,5 +117,9 @@ public class LoginController implements LoginControllerOpenApi {
                 .setExpiration(expiration)
                 .signWith(jwtKeyProvider.getKey(), SignatureAlgorithm.RS256)
                 .compact();
+    }
+
+    private Set<String> sortSet(@NotNull Set<String> set) {
+        return set.stream().sorted().collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }
