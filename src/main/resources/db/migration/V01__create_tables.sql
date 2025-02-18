@@ -1,7 +1,6 @@
 create table tb_application (
     id_application serial not null,
     ds_name varchar(255) not null,
-    ds_token varchar(255) not null,
     ds_user varchar(255) not null,
     ds_password varchar(255) not null,
     dt_create timestamp not null,
@@ -10,7 +9,6 @@ create table tb_application (
 alter table tb_application add constraint tb_application_pk primary key (id_application);
 create unique index tb_application_ak01 on tb_application (ds_name);
 create unique index tb_application_ak02 on tb_application (ds_user);
-create unique index tb_application_ak03 on tb_application (ds_token);
 
 create table tb_profile (
     id_profile serial not null,
@@ -52,3 +50,17 @@ alter table tb_profile_resource_action add constraint tb_profile_resource_action
 alter table tb_profile_resource_action add constraint tb_profile_resource_action_profile foreign key (id_profile) references tb_profile (id_profile);
 alter table tb_profile_resource_action add constraint tb_profile_resource_action_resource foreign key (id_resource) references tb_resource (id_resource);
 alter table tb_profile_resource_action add constraint tb_profile_resource_action_action foreign key (id_action) references tb_action (id_action);
+
+create table tb_service_user (
+    id_service_user serial not null,
+    id_application int not null,
+    id_profile int,
+    ds_name varchar(255) not null,
+    ds_password varchar(255) not null,
+    dt_create timestamp not null,
+    dt_update timestamp
+);
+alter table tb_service_user add constraint tb_service_user_pk primary key (id_service_user);
+alter table tb_service_user add constraint tb_service_user_application foreign key (id_application) references tb_application (id_application);
+alter table tb_service_user add constraint tb_service_user_profile foreign key (id_profile) references tb_profile (id_profile);
+create unique index tb_service_user_ak01 on tb_service_user (id_application, ds_name);

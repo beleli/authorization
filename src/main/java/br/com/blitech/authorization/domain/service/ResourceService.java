@@ -23,7 +23,7 @@ public class ResourceService {
 
     @Transactional(readOnly = true)
     public Resource findOrThrow(Long id) throws ResourceNotFoundException {
-        return resourceRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
+        return this.internalFindOrThrow(id);
     }
 
     @Transactional(readOnly = true)
@@ -45,10 +45,14 @@ public class ResourceService {
     @Transactional(rollbackFor = ResourceInUseException.class)
     public void delete(Long id) throws ResourceNotFoundException, ResourceInUseException {
         try {
-            resourceRepository.delete(this.findOrThrow(id));
+            resourceRepository.delete(this.internalFindOrThrow(id));
             resourceRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ResourceInUseException();
         }
+    }
+
+    private Resource internalFindOrThrow(Long id) throws ResourceNotFoundException {
+        return resourceRepository.findById(id).orElseThrow(ResourceNotFoundException::new);
     }
 }

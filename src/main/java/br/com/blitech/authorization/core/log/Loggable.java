@@ -114,7 +114,7 @@ public interface Loggable {
         for (int i = 0; i < json.length(); i++) {
             char ch = json.charAt(i);
             if (ch == '\u0000' || ch == '\\') {
-                continue;
+                //just ignore ch
             } else if (ch == '"' && i < json.length() - 1 && json.charAt(i + 1) == '{') {
                 result.append('{');
                 i++;

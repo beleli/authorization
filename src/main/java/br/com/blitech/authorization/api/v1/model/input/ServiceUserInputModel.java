@@ -5,31 +5,30 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-public class ApplicationInputModel implements Loggable {
+public class ServiceUserInputModel implements Loggable {
 
     @NotBlank
     @Length(max = 255)
-    @Schema(description = "Application name", example = "My Application")
+    @MaskProperty(format = LogMaskFormat.NAME)
+    @Schema(description = "User name", example = "userName")
     private String name;
 
-    @NotBlank
-    @Length(max = 255)
-    @Schema(description = "Application user", example = "admin")
-    private String user;
+    @Schema(description = "Profile id", example = "1")
+    private Long profileId;
 
     @NotBlank
     @Length(max = 255)
     @MaskProperty()
-    @Schema(description = "Application password", example = "admin123")
+    @Schema(description = "User password", example = "admin123")
     private String password;
 
     public String getName() { return name; }
-    public String getUser() { return user; }
+    public Long getProfileId() { return profileId; }
     public String getPassword() { return password; }
 
-    public ApplicationInputModel(String name, String user, String password) {
+    public ServiceUserInputModel(String name, Long profileId, String password) {
         this.name = name;
-        this.user = user;
+        this.profileId = profileId;
         this.password = password;
     }
 }

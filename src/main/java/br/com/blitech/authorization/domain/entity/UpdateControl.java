@@ -17,8 +17,14 @@ public abstract class UpdateControl extends BaseEntity {
     public OffsetDateTime getUpdateDate() { return updateDate; }
 
     @PrePersist
-    protected void prePersist() { createDate = OffsetDateTime.now(); }
+    protected void prePersist() {
+        normalizeFields();
+        createDate = OffsetDateTime.now();
+    }
 
     @PreUpdate
-    protected void preUpdate() { updateDate = OffsetDateTime.now(); }
+    protected void preUpdate() {
+        normalizeFields();
+        updateDate = OffsetDateTime.now();
+    }
 }

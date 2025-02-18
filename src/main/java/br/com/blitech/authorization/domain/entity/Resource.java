@@ -30,18 +30,7 @@ public class Resource extends UpdateControl {
     public Resource() { }
 
     @Override
-    protected void prePersist() {
-        normalizeFields();
-        super.prePersist();
-    }
-
-    @Override
-    protected void preUpdate() {
-        normalizeFields();
-        super.preUpdate();
-    }
-
-    private void normalizeFields() {
+    protected void normalizeFields() {
         this.name = setString(name);
     }
 }

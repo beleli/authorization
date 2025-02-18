@@ -1,10 +1,6 @@
 package br.com.blitech.authorization.domain;
 
-import br.com.blitech.authorization.domain.entity.Application;
-import br.com.blitech.authorization.domain.entity.ProfileResourceAction;
-import br.com.blitech.authorization.domain.entity.Profile;
-import br.com.blitech.authorization.domain.entity.Resource;
-import br.com.blitech.authorization.domain.entity.Action;
+import br.com.blitech.authorization.domain.entity.*;
 import org.jetbrains.annotations.NotNull;
 
 public class TestUtils {
@@ -21,7 +17,7 @@ public class TestUtils {
 
     @NotNull
     public static Application createApplication() {
-        return new Application("application", "token", "user", "password");
+        return new Application("application", "user", "password");
     }
 
     @NotNull
@@ -38,5 +34,10 @@ public class TestUtils {
     @NotNull
     public static ProfileResourceAction createProfileResourceAction() {
         return new ProfileResourceAction(createProfile(), createResource(), createAction());
+    }
+
+    @NotNull
+    public static ServiceUser createServiceUser() {
+        return new ServiceUser(createApplication(), createProfile(), "user", "password123");
     }
 }

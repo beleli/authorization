@@ -30,12 +30,11 @@ class ApplicationModelAssemblerTest {
 
     @Test
     void testToEntity() {
-        ApplicationInputModel applicationInputModel = new ApplicationInputModel("New Application", "New Description", "New User", "New Password");
+        ApplicationInputModel applicationInputModel = new ApplicationInputModel("New Application", "New User", "New Password");
         Application application = applicationModelAssembler.toEntity(applicationInputModel);
 
         assertNotNull(application);
         assertEquals(applicationInputModel.getName(), application.getName());
-        assertEquals(applicationInputModel.getToken(), application.getToken());
         assertEquals(applicationInputModel.getUser(), application.getUser());
         assertEquals(applicationInputModel.getPassword(), application.getPassword());
     }
@@ -43,13 +42,12 @@ class ApplicationModelAssemblerTest {
     @Test
     void testApplyModel() {
         Application application = createApplication();
-        ApplicationInputModel applicationInputModel = new ApplicationInputModel("New Application", "New Description", "New User", "New Password");
+        ApplicationInputModel applicationInputModel = new ApplicationInputModel("New Application", "New User", "New Password");
         Application updatedApplication = applicationModelAssembler.applyModel(application, applicationInputModel);
 
         assertNotNull(updatedApplication);
         assertEquals(application.getId(), updatedApplication.getId());
         assertEquals(applicationInputModel.getName(), updatedApplication.getName());
-        assertEquals(applicationInputModel.getToken(), updatedApplication.getToken());
         assertEquals(applicationInputModel.getUser(), updatedApplication.getUser());
         assertEquals(applicationInputModel.getPassword(), updatedApplication.getPassword());
     }

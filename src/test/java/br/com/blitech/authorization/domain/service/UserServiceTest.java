@@ -40,7 +40,7 @@ class UserServiceTest {
     }
 
     @Test
-    void testGetUserAuthorities() throws UserInvalidPasswordException, ApplicationNotFoundException {
+    void testGetAuthorities() throws UserInvalidPasswordException, ApplicationNotFoundException {
         Application application = createApplication();
         String username = "testUser";
         String password = "testPassword";
@@ -52,10 +52,10 @@ class UserServiceTest {
         when(profileResourceActionRepository.findByApplicationAndGroups(application.getId(), adGroups))
                 .thenReturn(Collections.singletonList(action));
 
-        Set<String> authorities = userService.getUserAuthorities(application, username, password);
+        Set<String> authorities = userService.getAuthorities(application, username, password);
         assertTrue(authorities.contains("RESOURCE.ACTION"));
 
         when(domainService.authenticate(username, password)).thenReturn(false);
-        assertThrows(UserInvalidPasswordException.class, () -> userService.getUserAuthorities(application, username, password));
+        assertThrows(UserInvalidPasswordException.class, () -> userService.getAuthorities(application, username, password));
     }
 }

@@ -16,24 +16,20 @@ import java.util.TreeSet;
 @Service
 public class UserService {
     private final DomainService domainService;
-    private final ApplicationService applicationService;
     private final ProfileResourceActionRepository profileResourceActionRepository;
 
     @Autowired
-    public UserService(DomainService domainService, ApplicationService applicationService, ProfileResourceActionRepository profileResourceActionRepository) {
+    public UserService(DomainService domainService, ProfileResourceActionRepository profileResourceActionRepository) {
         this.domainService = domainService;
-        this.applicationService = applicationService;
         this.profileResourceActionRepository = profileResourceActionRepository;
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getUserAuthorities(Application application, String username, String password) throws UserInvalidPasswordException, ApplicationNotFoundException {
+    public Set<String> getAuthorities(Application application, String username, String password) throws UserInvalidPasswordException, ApplicationNotFoundException {
         if (!domainService.authenticate(username, password)) {
             throw new UserInvalidPasswordException();
         }
-
         List<String> adGroups = domainService.findGroupsByUser(username);
-
         Set<String> authorities = new TreeSet<>();
         for (ProfileResourceAction profileResourceAction : profileResourceActionRepository.findByApplicationAndGroups(application.getId(), adGroups)) {
             authorities.add(profileResourceAction.getAuthority());

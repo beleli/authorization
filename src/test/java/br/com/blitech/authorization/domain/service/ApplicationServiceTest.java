@@ -133,7 +133,7 @@ class ApplicationServiceTest {
     }
 
     @Test
-    void testGetApplicationAuthorities() throws ApplicationNotFoundException {
+    void testGetAuthorities() throws ApplicationNotFoundException {
         Long id = 1L;
         Application application = createApplication();
         ProfileResourceAction action = createProfileResourceAction();
@@ -141,7 +141,7 @@ class ApplicationServiceTest {
         when(applicationRepository.findById(id)).thenReturn(Optional.of(application));
         when(profileResourceActionRepository.findByProfileApplication(application)).thenReturn(Collections.singletonList(action));
 
-        Set<String> authorities = applicationService.getApplicationAuthorities(id);
+        Set<String> authorities = applicationService.getAuthorities(id);
         assertTrue(authorities.contains("RESOURCE.ACTION"));
     }
 }

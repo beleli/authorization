@@ -23,7 +23,7 @@ public class ActionService {
 
     @Transactional(readOnly = true)
     public Action findOrThrow(Long id) throws ActionNotFoundException {
-        return actionRepository.findById(id).orElseThrow(ActionNotFoundException::new);
+        return this.internalFindOrThrow(id);
     }
 
     @Transactional(readOnly = true)
@@ -45,10 +45,14 @@ public class ActionService {
     @Transactional(rollbackFor = ActionInUseException.class)
     public void delete(Long id) throws ActionNotFoundException, ActionInUseException {
         try {
-            actionRepository.delete(this.findOrThrow(id));
+            actionRepository.delete(this.internalFindOrThrow(id));
             actionRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ActionInUseException();
         }
+    }
+
+    private Action internalFindOrThrow(Long id) throws ActionNotFoundException {
+        return actionRepository.findById(id).orElseThrow(ActionNotFoundException::new);
     }
 }

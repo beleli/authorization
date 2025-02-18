@@ -42,7 +42,7 @@ public class ProfileService {
     @Transactional(readOnly = true)
     public Profile findOrThrow(Long id, Long applicationId) throws ApplicationNotFoundException, ProfileNotFoundException {
         var application = applicationService.findOrThrow(applicationId);
-        return this.findOrThrow(id, application);
+        return this.internalFindOrThrow(id, application.getId());
     }
 
     @Transactional(readOnly = true)
@@ -74,7 +74,7 @@ public class ProfileService {
     public void delete(Long applicationId, Long id) throws ApplicationNotFoundException, ProfileNotFoundException, ProfileInUseException {
         try {
             var application = applicationService.findOrThrow(applicationId);
-            profileRepository.delete(this.findOrThrow(id, application));
+            profileRepository.delete(this.internalFindOrThrow(id, application.getId()));
             profileRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ProfileInUseException();
@@ -82,8 +82,8 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getProfileAuthorities(String name) throws ProfileNotFoundException {
-        Optional<Profile> profile = profileRepository.findByName(name);
+    public Set<String> getAuthorities(Long id) throws ProfileNotFoundException {
+        Optional<Profile> profile = profileRepository.findById(id);
         if (profile.isEmpty()) throw new ProfileNotFoundException();
 
         Set<String> authorities = new HashSet<>();
@@ -92,5 +92,9 @@ public class ProfileService {
         }
 
         return authorities;
+    }
+
+    private Profile internalFindOrThrow(Long id, Long applicationId) throws ProfileNotFoundException {
+        return profileRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(ProfileNotFoundException::new);
     }
 }

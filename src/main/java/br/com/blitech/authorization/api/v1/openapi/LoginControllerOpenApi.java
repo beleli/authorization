@@ -16,6 +16,9 @@ public interface LoginControllerOpenApi {
     @Operation(summary = "Generate access token with Application credentials")
     LoginModel loginApplication(@NotNull @RequestBody LoginApplicationInputModel loginApplicationInputModel) throws UserNotAuthorizedException;
 
+    @Operation(summary = "Generate access token with Service User credentials")
+    LoginModel loginServiceUser(@NotNull @RequestBody LoginUserInputModel loginUserInputModel) throws BusinessException;
+
     @Operation(summary = "Generate access token with User credentials")
     LoginModel loginUser(@NotNull @RequestBody LoginUserInputModel loginUserInputModel) throws BusinessException;
 }

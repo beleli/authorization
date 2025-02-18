@@ -17,9 +17,6 @@ public class Application extends UpdateControl{
     @Column(name = "ds_name", nullable = false, unique = true)
     private String name;
 
-    @Column(name = "ds_token", nullable = false, unique = true)
-    private String token;
-
     @Column(name = "ds_user", nullable = false, unique = true)
     private String user;
 
@@ -29,22 +26,23 @@ public class Application extends UpdateControl{
     @OneToMany(mappedBy = "application")
     private Set<Profile> profiles = new HashSet<>();
 
+    @OneToMany(mappedBy = "application")
+    private Set<ServiceUser> serviceUsers = new HashSet<>();
+
     public Long getId() { return id; }
     public String getName() { return name; }
-    public String getToken() { return token; }
     public String getUser() { return user; }
     public String getPassword() { return password; }
     public Set<Profile> getProfiles() { return profiles; }
 
     public void setName(String name) { this.name = name; }
-    public void setToken(String token) { this.token = token; }
     public void setUser(String user) { this.user = user; }
     public void setPassword(String password) { this.password = password; }
     public void setProfiles(Set<Profile> profiles) { this.profiles = profiles; }
+    public void setServiceUsers(Set<ServiceUser> serviceUsers) { this.serviceUsers = serviceUsers; }
 
-    public Application(String name, String token, String user, String password) {
+    public Application(String name, String user, String password) {
         this.name = name;
-        this.token = token;
         this.user = user;
         this.password = password;
     }
@@ -54,20 +52,8 @@ public class Application extends UpdateControl{
     public Application() { }
 
     @Override
-    protected void prePersist() {
-        normalizeFields();
-        super.prePersist();
-    }
-
-    @Override
-    protected void preUpdate() {
-        normalizeFields();
-        super.preUpdate();
-    }
-
-    private void normalizeFields() {
+    protected void normalizeFields() {
         this.name = setString(name);
-        this.token = setString(token);
         this.user = setString(user);
     }
 }
