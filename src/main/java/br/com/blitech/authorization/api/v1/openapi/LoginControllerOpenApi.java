@@ -16,7 +16,7 @@ import java.security.spec.InvalidKeySpecException;
 public interface LoginControllerOpenApi {
 
     @Operation(summary = "Generate access token with Application credentials")
-    LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws UserNotAuthorizedException, BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
+    LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
 
     @Operation(summary = "Generate access token with Service User credentials")
     LoginModel loginServiceUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
