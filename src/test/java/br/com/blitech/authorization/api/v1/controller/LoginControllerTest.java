@@ -74,7 +74,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void testLoginUser() throws BusinessException {
+    void testLoginUser() throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         LoginInputModel loginInputModel = createLoginInputModel();
         var application = createApplication();
         when(applicationService.findByNameOrThrow(any())).thenReturn(application);
@@ -89,9 +89,8 @@ class LoginControllerTest {
     }
 
     @Test
-    void testLoginServiceUser() throws BusinessException {
+    void testLoginServiceUser() throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         LoginInputModel loginInputModel = createLoginInputModel();
-        var application = createApplication();
         when(serviceUserService.validateLogin(any(), any(), any())).thenReturn(createServiceUser());
         when(serviceUserService.getAuthorities(any(), any())).thenReturn(Set.of("RESOURCE.ACTION"));
 

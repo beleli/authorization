@@ -54,7 +54,7 @@ public class TestUtils {
     }
 
     @NotNull
-    static public KeyPair createKeyPair() throws NoSuchAlgorithmException {
+    public static KeyPair createKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         return keyPairGenerator.generateKeyPair();

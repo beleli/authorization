@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @Tag(name = "Login")
 public interface LoginControllerOpenApi {
 
@@ -16,8 +19,8 @@ public interface LoginControllerOpenApi {
     LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws UserNotAuthorizedException;
 
     @Operation(summary = "Generate access token with Service User credentials")
-    LoginModel loginServiceUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException;
+    LoginModel loginServiceUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
 
     @Operation(summary = "Generate access token with User credentials")
-    LoginModel loginUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException;
+    LoginModel loginUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
 }

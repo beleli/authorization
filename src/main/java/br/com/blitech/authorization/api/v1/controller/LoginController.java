@@ -70,7 +70,7 @@ public class LoginController implements LoginControllerOpenApi {
     @RateLimit
     @LogAndValidate
     @PostMapping("/user")
-    public LoginModel loginUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException {
+    public LoginModel loginUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             var application = applicationService.findByNameOrThrow(loginInputModel.getApplication());
             var authorities = userService.getAuthorities(
@@ -81,8 +81,6 @@ public class LoginController implements LoginControllerOpenApi {
             return new LoginModel(generateToken(loginInputModel.getUsername(), application, authorities, false));
         } catch (UserInvalidPasswordException | ApplicationNotFoundException e) {
             throw new UserNotAuthorizedException();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -90,15 +88,13 @@ public class LoginController implements LoginControllerOpenApi {
     @RateLimit
     @LogAndValidate
     @PostMapping("/service-user")
-    public LoginModel loginServiceUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException {
+    public LoginModel loginServiceUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             var user = serviceUserService.validateLogin(loginInputModel.getApplication(), loginInputModel.getUsername(), loginInputModel.getPassword());
             var authorities = serviceUserService.getAuthorities(user.getApplication().getId(), user.getId());
             return new LoginModel(generateToken(loginInputModel.getUsername(), user.getApplication(), authorities, false));
         } catch (UserInvalidPasswordException | ApplicationNotFoundException e) {
             throw new UserNotAuthorizedException();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e.getMessage());
         }
     }
 

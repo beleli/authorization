@@ -70,7 +70,7 @@ public class LogAndValidateAspect {
         }
     }
 
-    private static String createLog(Object object, Boolean isLogged) {
+    private static String createLog(Object object, boolean isLogged) {
         if (!isLogged) return "not logged";
         return createLog(object);
     }

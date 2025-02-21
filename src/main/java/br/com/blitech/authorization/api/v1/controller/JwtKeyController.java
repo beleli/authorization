@@ -5,6 +5,8 @@ import br.com.blitech.authorization.api.aspect.RateLimitAspect.RateLimit;
 import br.com.blitech.authorization.api.security.JwtKeyProvider;
 import br.com.blitech.authorization.api.v1.model.JwksModel;
 import br.com.blitech.authorization.api.v1.openapi.JwtKeyControllerOpenApi;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationKeyNotFoundException;
+import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.service.ApplicationKeyService;
 import br.com.blitech.authorization.domain.service.ApplicationService;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigInteger;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 
 @RestController
@@ -47,7 +51,7 @@ public class JwtKeyController implements JwtKeyControllerOpenApi {
     @RateLimit
     @LogAndValidate
     @GetMapping("/{applicationId}/jwks.json")
-    public JwksModel getApplicationJwks(@PathVariable Long applicationId) throws Exception {
+    public JwksModel getApplicationJwks(@PathVariable Long applicationId) throws ApplicationNotFoundException, ApplicationKeyNotFoundException, NoSuchAlgorithmException, InvalidKeySpecException {
         var application = applicationService.findOrThrow(applicationId);
 
         RSAPublicKey publicKey;
