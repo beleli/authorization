@@ -53,6 +53,7 @@ tasks.named('test') {
 	useJUnitPlatform()
 	environment("AUTHORIZATION_SECRETS_MANAGER_IMPL", "localstack")
 	environment("SPRING_PROFILES_ACTIVE", "test")
+	finalizedBy("jacocoTestReport")
 }
 
 jacocoTestReport {
