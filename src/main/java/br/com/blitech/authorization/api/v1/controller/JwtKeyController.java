@@ -63,7 +63,7 @@ public class JwtKeyController implements JwtKeyControllerOpenApi {
         }  else {
             var key = applicationKeyService.getLastPublicKey(application);
             kId = key.getFirst();
-            publicKey = (RSAPublicKey) key.getSecond(); ;
+            publicKey = (RSAPublicKey) key.getSecond();
         }
 
         return createJwksModel(kId, publicKey);

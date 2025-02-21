@@ -36,7 +36,7 @@ public class ApplicationKeyService {
     }
 
     @Transactional(readOnly = true)
-    public Boolean hasKey(Long applicationId) {
+    public boolean hasKey(Long applicationId) {
         return applicationKeyRepository.countByApplicationId(applicationId) > 0;
     }
 

@@ -54,15 +54,13 @@ public class LoginController implements LoginControllerOpenApi {
     @RateLimit
     @LogAndValidate
     @PostMapping("/application")
-    public LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws UserNotAuthorizedException {
+    public LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             var application = applicationService.validateLogin(loginInputModel.getApplication(), loginInputModel.getUsername(), loginInputModel.getPassword());
             var authorities = applicationService.getAuthorities(application.getId());
             return new LoginModel(generateToken(application.getUser(), application, authorities, true));
         } catch (ApplicationNotFoundException | ApplicationKeyNotFoundException | UserInvalidPasswordException e) {
             throw new UserNotAuthorizedException();
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -98,7 +96,7 @@ public class LoginController implements LoginControllerOpenApi {
         }
     }
 
-    private String generateToken(String username, @NotNull Application application, @NotNull Set<String> authorities, Boolean isDefaultKey) throws NoSuchAlgorithmException, InvalidKeySpecException, ApplicationKeyNotFoundException {
+    private String generateToken(String username, @NotNull Application application, @NotNull Set<String> authorities, boolean isDefaultKey) throws NoSuchAlgorithmException, InvalidKeySpecException, ApplicationKeyNotFoundException {
         Date date = new Date();
         Date expiration = new Date(date.getTime() + 3600000);
 

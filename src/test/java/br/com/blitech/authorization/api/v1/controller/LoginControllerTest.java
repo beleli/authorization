@@ -58,7 +58,7 @@ class LoginControllerTest {
     }
 
     @Test
-    void testLoginApplication() throws UserNotAuthorizedException, ApplicationNotFoundException, UserInvalidPasswordException {
+    void testLoginApplication() throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         LoginInputModel loginApplicationInputModel = createLoginInputModel();
         var application = createApplication();
         application.setUseDefaultKey(true);
