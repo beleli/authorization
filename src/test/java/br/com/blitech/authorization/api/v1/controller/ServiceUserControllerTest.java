@@ -3,9 +3,12 @@ package br.com.blitech.authorization.api.v1.controller;
 import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ServiceUserModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ServiceUserModel;
+import br.com.blitech.authorization.api.v1.model.input.ChangePasswordInputModel;
 import br.com.blitech.authorization.api.v1.model.input.ServiceUserInputModel;
+import br.com.blitech.authorization.api.v1.model.input.ServiceUserPasswordInputModel;
 import br.com.blitech.authorization.domain.entity.ServiceUser;
 import br.com.blitech.authorization.domain.exception.BusinessException;
+import br.com.blitech.authorization.domain.exception.business.UserInvalidPasswordException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ProfileNotFoundException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ServiceUserNotFoundException;
@@ -20,8 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import java.util.Set;
 
-import static br.com.blitech.authorization.api.TestUtlis.createServiceUserInputModel;
-import static br.com.blitech.authorization.api.TestUtlis.createServiceUserModel;
+import static br.com.blitech.authorization.api.TestUtlis.*;
 import static br.com.blitech.authorization.domain.TestUtils.createServiceUser;
 import static org.hibernate.internal.util.collections.CollectionHelper.setOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +45,8 @@ class ServiceUserControllerTest {
     private ServiceUser serviceUser = createServiceUser();
     private ServiceUserModel serviceUserModel = createServiceUserModel();
     private ServiceUserInputModel serviceUserInputModel = createServiceUserInputModel();
+    private ServiceUserPasswordInputModel servicePasswordUserInputModel = createServiceUserPasswordInputModel();
+    private ChangePasswordInputModel changePasswordInputModel = createChangePasswordInputModel();
 
     @BeforeEach
     void setUp() {
@@ -83,7 +87,7 @@ class ServiceUserControllerTest {
         when(serviceUserModelAssembler.toEntity(anyLong(), any())).thenReturn(serviceUser);
         when(serviceUserModelAssembler.toModel(any())).thenReturn(serviceUserModel);
 
-        ServiceUserModel result = serviceUserController.insert(1L, serviceUserInputModel);
+        ServiceUserModel result = serviceUserController.insert(1L, servicePasswordUserInputModel);
 
         assertNotNull(result);
         assertEquals(serviceUser.getName(), result.getName());
@@ -116,5 +120,15 @@ class ServiceUserControllerTest {
         serviceUserController.delete(1L, 1L);
 
         verify(serviceUserService, times(1)).delete(1L, 1L);
+    }
+
+    @Test
+    void testChangePassword() throws ApplicationNotFoundException, ServiceUserNotFoundException, UserInvalidPasswordException {
+        when(serviceUserService.findOrThrow(anyLong(), anyLong())).thenReturn(serviceUser);
+        doNothing().when(serviceUserService).changePassword(any(), any(), any());
+
+        serviceUserController.changePassword(1L, 1L, changePasswordInputModel);
+
+        verify(serviceUserService, times(1)).changePassword(serviceUser, changePasswordInputModel.getPassword(), changePasswordInputModel.getNewPassword());
     }
 }

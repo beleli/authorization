@@ -15,13 +15,18 @@ public class ApplicationModel implements Loggable {
     @Schema(description = "Application user", example = "admin")
     private String user;
 
+    @Schema(description = "Use default key", example = "true")
+    private Boolean useDefaultKey;
+
     public Long getApplicationId() { return applicationId; }
     public String getName() { return name; }
     public String getUser() { return user; }
+    public Boolean getUseDefaultKey() { return useDefaultKey; }
 
-    public ApplicationModel(Long applicationId, String name, String user) {
+    public ApplicationModel(Long applicationId, String name, String user, Boolean useDefaultKey) {
         this.applicationId = applicationId;
         this.name = name;
         this.user = user;
+        this.useDefaultKey = useDefaultKey;
     }
 }

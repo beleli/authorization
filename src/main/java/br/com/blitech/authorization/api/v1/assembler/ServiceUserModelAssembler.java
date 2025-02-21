@@ -2,6 +2,7 @@ package br.com.blitech.authorization.api.v1.assembler;
 
 import br.com.blitech.authorization.api.v1.model.ServiceUserModel;
 import br.com.blitech.authorization.api.v1.model.input.ServiceUserInputModel;
+import br.com.blitech.authorization.api.v1.model.input.ServiceUserPasswordInputModel;
 import br.com.blitech.authorization.domain.entity.Application;
 import br.com.blitech.authorization.domain.entity.Profile;
 import br.com.blitech.authorization.domain.entity.ServiceUser;
@@ -19,19 +20,18 @@ public class ServiceUserModelAssembler {
         );
     }
 
-    public ServiceUser toEntity(Long applicationId, @NotNull ServiceUserInputModel serviceUserInputModel) {
+    public ServiceUser toEntity(Long applicationId, @NotNull ServiceUserPasswordInputModel serviceUserPasswordInputModel) {
         return new ServiceUser(
             new Application(applicationId),
-            getProfile(serviceUserInputModel.getProfileId()),
-            serviceUserInputModel.getName(),
-            serviceUserInputModel.getPassword()
+            getProfile(serviceUserPasswordInputModel.getProfileId()),
+            serviceUserPasswordInputModel.getName(),
+            serviceUserPasswordInputModel.getPassword()
         );
     }
 
     public ServiceUser applyModel(@NotNull ServiceUser serviceUser, @NotNull ServiceUserInputModel serviceUserInputModel) {
         serviceUser.setName(serviceUserInputModel.getName());
         serviceUser.setProfile(getProfile(serviceUserInputModel.getProfileId()));
-        serviceUser.setPassword(serviceUserInputModel.getPassword());
         return serviceUser;
     }
 

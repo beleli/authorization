@@ -3,12 +3,25 @@ create table tb_application (
     ds_name varchar(255) not null,
     ds_user varchar(255) not null,
     ds_password varchar(255) not null,
+    fl_default_key boolean not null,
     dt_create timestamp not null,
     dt_update timestamp
 );
 alter table tb_application add constraint tb_application_pk primary key (id_application);
 create unique index tb_application_ak01 on tb_application (ds_name);
-create unique index tb_application_ak02 on tb_application (ds_user);
+
+create table tb_application_key (
+    id_application_key serial not null,
+    id_application int not null,
+    id_key int not null,
+    ds_private_key bytea not null,
+    ds_public_key bytea not null,
+    dt_create timestamp not null,
+    dt_update timestamp
+);
+alter table tb_application_key add constraint tb_application_key_pk primary key (id_application_key);
+alter table tb_application_key add constraint tb_application_key_application foreign key (id_application) references tb_application (id_application);
+create unique index tb_application_key_ak01 on tb_application_key (id_application, id_key);
 
 create table tb_profile (
     id_profile serial not null,

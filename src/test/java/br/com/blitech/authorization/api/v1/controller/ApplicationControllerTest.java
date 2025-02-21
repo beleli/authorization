@@ -4,10 +4,15 @@ import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ApplicationModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ApplicationModel;
 import br.com.blitech.authorization.api.v1.model.input.ApplicationInputModel;
+import br.com.blitech.authorization.api.v1.model.input.ApplicationPasswordInputModel;
+import br.com.blitech.authorization.api.v1.model.input.ChangePasswordInputModel;
 import br.com.blitech.authorization.domain.entity.Application;
+import br.com.blitech.authorization.domain.entity.ApplicationKey;
 import br.com.blitech.authorization.domain.exception.alreadyexistsexception.ApplicationAlreadyExistsException;
+import br.com.blitech.authorization.domain.exception.business.UserInvalidPasswordException;
 import br.com.blitech.authorization.domain.exception.entityinuse.ApplicationInUseException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.ApplicationNotFoundException;
+import br.com.blitech.authorization.domain.service.ApplicationKeyService;
 import br.com.blitech.authorization.domain.service.ApplicationService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +25,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 
-import static br.com.blitech.authorization.api.TestUtlis.createApplicationInputModel;
-import static br.com.blitech.authorization.api.TestUtlis.createApplicationModel;
+import static br.com.blitech.authorization.api.TestUtlis.*;
 import static br.com.blitech.authorization.domain.TestUtils.createApplication;
+import static br.com.blitech.authorization.domain.TestUtils.createApplicationKey;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,6 +42,9 @@ class ApplicationControllerTest {
     private ApplicationService applicationService;
 
     @Mock
+    private ApplicationKeyService applicationKeyService;
+
+    @Mock
     private ApplicationModelAssembler applicationModelAssembler;
 
     @InjectMocks
@@ -44,6 +53,8 @@ class ApplicationControllerTest {
     private Application application = createApplication();
     private ApplicationModel applicationModel = createApplicationModel();
     private ApplicationInputModel applicationInputModel = createApplicationInputModel();
+    private ApplicationPasswordInputModel applicationPasswordInputModel = createApplicationPasswordInputModel();
+    private ChangePasswordInputModel changePasswordInputModel = createChangePasswordInputModel();
 
     @BeforeEach
     void setUp() {
@@ -77,14 +88,14 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testInsert() throws ApplicationAlreadyExistsException {
+    void testInsert() throws ApplicationAlreadyExistsException, NoSuchAlgorithmException {
         MockedStatic mockedStatic = mockStatic(ResourceUriHelper.class);
 
         when(applicationService.save(any())).thenReturn(application);
         when(applicationModelAssembler.toEntity(any())).thenReturn(application);
         when(applicationModelAssembler.toModel(any())).thenReturn(applicationModel);
 
-        ApplicationModel result = applicationController.insert(applicationInputModel);
+        ApplicationModel result = applicationController.insert(applicationPasswordInputModel);
 
         assertNotNull(result);
         assertEquals(application.getName(), result.getName());
@@ -94,7 +105,7 @@ class ApplicationControllerTest {
     }
 
     @Test
-    void testUpdate() throws ApplicationAlreadyExistsException, ApplicationNotFoundException {
+    void testUpdate() throws ApplicationAlreadyExistsException, ApplicationNotFoundException, NoSuchAlgorithmException {
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
         when(applicationService.save(any())).thenReturn(application);
         when(applicationModelAssembler.applyModel(any(), any())).thenReturn(application);
@@ -115,5 +126,25 @@ class ApplicationControllerTest {
         applicationController.delete(1L);
 
         verify(applicationService, times(1)).delete(1L);
+    }
+
+    @Test
+    void testChangePassword() throws ApplicationNotFoundException, UserInvalidPasswordException {
+        when(applicationService.findOrThrow(any())).thenReturn(application);
+        doNothing().when(applicationService).changePassword(any(), any(), any());
+
+        applicationController.changePassword(1L, changePasswordInputModel);
+
+        verify(applicationService, times(1)).changePassword(application, changePasswordInputModel.getPassword(), changePasswordInputModel.getNewPassword());
+    }
+
+    @Test
+    void testInesrtKey() throws ApplicationNotFoundException, NoSuchAlgorithmException {
+        when(applicationService.findOrThrow(any())).thenReturn(application);
+        when(applicationKeyService.save(any())).thenReturn(createApplicationKey());
+
+        applicationController.insertKey(1L);
+
+        verify(applicationKeyService, times(1)).save(application);
     }
 }

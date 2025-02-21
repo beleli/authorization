@@ -70,6 +70,11 @@ public class LogAndValidateAspect {
         }
     }
 
+    private static String createLog(Object object, boolean isLogged) {
+        if (!isLogged) return "not logged";
+        return createLog(object);
+    }
+
     private static String createLog(Object object) {
         return object instanceof Loggable loggable ? loggable.toJsonLog() : "not logged";
     }
@@ -91,7 +96,7 @@ public class LogAndValidateAspect {
                 ? ((ResponseEntity<?>) returnValue).getBody()
                 : returnValue;
 
-        var log = body == null ? null : createLog(body);
+        var log = body == null ? null : createLog(body, logAndValidate.logResponse());
         getLogger(joinPoint).info("response httpStatus:{}, body:{}", status, log);
     }
 

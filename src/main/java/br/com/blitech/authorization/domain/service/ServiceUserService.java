@@ -39,16 +39,21 @@ public class ServiceUserService {
     }
 
     @Transactional(readOnly = true)
-    public ServiceUser findOrThrow(Long id, Long applicationId) throws ApplicationNotFoundException, ServiceUserNotFoundException {
+    public ServiceUser findOrThrow(Long applicationId, Long id) throws ApplicationNotFoundException, ServiceUserNotFoundException {
         var application = applicationService.findOrThrow(applicationId);
-        return this.internalFindOrThrow(id, application.getId());
+        return this.internalFindOrThrow(application.getId(), id);
     }
 
     @Transactional(rollbackFor = {ServiceUserAlreadyExistsException.class, EntityNotFoundException.class})
     public ServiceUser save(@NotNull ServiceUser serviceUser) throws ServiceUserAlreadyExistsException, ServiceUserNotFoundException, ApplicationNotFoundException, ProfileNotFoundException {
         try {
             var application = applicationService.findOrThrow(serviceUser.getApplication().getId());
-            if (serviceUser.getProfile() != null) profileService.findOrThrow(serviceUser.getProfile().getId(), application);
+            if (serviceUser.getProfile() != null) profileService.findOrThrow(application, serviceUser.getProfile().getId());
+
+            if (serviceUser.getId() == null) {
+                serviceUser.setPassword(passwordEncoder.encode(serviceUser.getPassword()));
+            }
+
             serviceUser = serviceUserRepository.save(serviceUser);
             serviceUserRepository.flush();
             return serviceUser;
@@ -69,7 +74,7 @@ public class ServiceUserService {
     public void delete(Long applicationId, Long id) throws ApplicationNotFoundException, ServiceUserNotFoundException, ServiceUserInUseException {
         try {
             var application = applicationService.findOrThrow(applicationId);
-            serviceUserRepository.delete(this.internalFindOrThrow(id, application.getId()));
+            serviceUserRepository.delete(this.internalFindOrThrow(application.getId(), id));
             serviceUserRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ServiceUserInUseException();
@@ -85,9 +90,9 @@ public class ServiceUserService {
     }
 
     @Transactional(readOnly = true)
-    public Set<String> getAuthorities(Long id, Long applicationId) throws ApplicationNotFoundException, ServiceUserNotFoundException, ProfileNotFoundException {
+    public Set<String> getAuthorities(Long applicationId, Long id) throws ApplicationNotFoundException, ServiceUserNotFoundException, ProfileNotFoundException {
         var application = applicationService.findOrThrow(applicationId);
-        var serviceUser = this.internalFindOrThrow(id, application.getId());
+        var serviceUser = this.internalFindOrThrow(application.getId(), id);
         Set<String> authorities;
 
         if (serviceUser.getProfile() == null) {
@@ -99,7 +104,16 @@ public class ServiceUserService {
         return authorities;
     }
 
-    private ServiceUser internalFindOrThrow(Long id, Long applicationId) throws ServiceUserNotFoundException {
-        return serviceUserRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(ServiceUserNotFoundException::new);
+    @Transactional
+    public void changePassword(@NotNull ServiceUser serviceUser, String password, String newPassword) throws UserInvalidPasswordException {
+        if (!passwordEncoder.matches(password, serviceUser.getPassword())) {
+            throw new UserInvalidPasswordException();
+        }
+        serviceUser.setPassword(passwordEncoder.encode(newPassword));
+        serviceUserRepository.save(serviceUser);
+    }
+
+    private ServiceUser internalFindOrThrow(Long applicationId, Long id) throws ServiceUserNotFoundException {
+        return serviceUserRepository.findByApplicationIdAndId(applicationId, id).orElseThrow(ServiceUserNotFoundException::new);
     }
 }

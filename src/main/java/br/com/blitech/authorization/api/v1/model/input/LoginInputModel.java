@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.Length;
 
-public class LoginUserInputModel implements Loggable {
+public class LoginInputModel implements Loggable {
 
     @NotBlank
     @Length(max = 255)
@@ -29,7 +29,7 @@ public class LoginUserInputModel implements Loggable {
     public String getPassword() { return password; }
     public String getApplication() { return application; }
 
-    public LoginUserInputModel(String username, String password, String application) {
+    public LoginInputModel(String username, String password, String application) {
         this.username = username;
         this.password = password;
         this.application = application;

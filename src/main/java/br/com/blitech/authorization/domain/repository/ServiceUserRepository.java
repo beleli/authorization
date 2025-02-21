@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface ServiceUserRepository  extends JpaRepository<ServiceUser, Long> {
     Optional<ServiceUser> findByApplicationIdAndName(Long applicationId, String name);
-    Optional<ServiceUser> findByIdAndApplicationId(Long id, Long applicationId);
+    Optional<ServiceUser> findByApplicationIdAndId(Long applicationId, Long id);
     Set<ServiceUser> findByApplicationId(Long applicationId);
 }
 

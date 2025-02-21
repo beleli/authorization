@@ -40,14 +40,14 @@ public class ProfileService {
     }
 
     @Transactional(readOnly = true)
-    public Profile findOrThrow(Long id, Long applicationId) throws ApplicationNotFoundException, ProfileNotFoundException {
+    public Profile findOrThrow(Long applicationId, Long id) throws ApplicationNotFoundException, ProfileNotFoundException {
         var application = applicationService.findOrThrow(applicationId);
-        return this.internalFindOrThrow(id, application.getId());
+        return this.internalFindOrThrow(application.getId(), id);
     }
 
     @Transactional(readOnly = true)
-    public Profile findOrThrow(Long id, @NotNull Application application) throws ApplicationNotFoundException, ProfileNotFoundException {
-        return profileRepository.findByIdAndApplicationId(id, application.getId()).orElseThrow(ProfileNotFoundException::new);
+    public Profile findOrThrow(@NotNull Application application, Long id) throws ApplicationNotFoundException, ProfileNotFoundException {
+        return profileRepository.findByApplicationIdAndId(application.getId(), id).orElseThrow(ProfileNotFoundException::new);
     }
 
     @Transactional(rollbackFor = {ProfileAlreadyExistsException.class, EntityNotFoundException.class})
@@ -74,7 +74,7 @@ public class ProfileService {
     public void delete(Long applicationId, Long id) throws ApplicationNotFoundException, ProfileNotFoundException, ProfileInUseException {
         try {
             var application = applicationService.findOrThrow(applicationId);
-            profileRepository.delete(this.internalFindOrThrow(id, application.getId()));
+            profileRepository.delete(this.internalFindOrThrow(application.getId(), id));
             profileRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ProfileInUseException();
@@ -94,7 +94,7 @@ public class ProfileService {
         return authorities;
     }
 
-    private Profile internalFindOrThrow(Long id, Long applicationId) throws ProfileNotFoundException {
-        return profileRepository.findByIdAndApplicationId(id, applicationId).orElseThrow(ProfileNotFoundException::new);
+    private Profile internalFindOrThrow(Long applicationId, Long id) throws ProfileNotFoundException {
+        return profileRepository.findByApplicationIdAndId(applicationId, id).orElseThrow(ProfileNotFoundException::new);
     }
 }

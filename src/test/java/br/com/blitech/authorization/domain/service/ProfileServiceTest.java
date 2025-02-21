@@ -63,12 +63,12 @@ class ProfileServiceTest {
         Profile profile = createProfile();
         profile.setApplication(application);
         when(applicationService.findOrThrow(any())).thenReturn(application);
-        when(profileRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.of(profile));
+        when(profileRepository.findByApplicationIdAndId(anyLong(), anyLong())).thenReturn(Optional.of(profile));
 
         Profile result = profileService.findOrThrow(1L, 1L);
         assertEquals(profile, result);
 
-        when(profileRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(profileRepository.findByApplicationIdAndId(anyLong(), anyLong())).thenReturn(Optional.empty());
         assertThrows(ProfileNotFoundException.class, () -> profileService.findOrThrow(1L, 1L));
     }
 
@@ -127,7 +127,7 @@ class ProfileServiceTest {
         Profile profile = createProfile();
         profile.setApplication(application);
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
-        when(profileRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.of(profile));
+        when(profileRepository.findByApplicationIdAndId(anyLong(), anyLong())).thenReturn(Optional.of(profile));
         doNothing().when(profileRepository).delete(any());
 
         assertDoesNotThrow(() -> profileService.delete(1L, 1L));

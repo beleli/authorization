@@ -36,6 +36,7 @@ class ApplicationRepositoryTest {
         newApplication.setName("NewApplication");
         newApplication.setUser("NewUser");
         newApplication.setPassword("NewPassword");
+        newApplication.setUseDefaultKey(false);
         Application savedApplication = applicationRepository.save(newApplication);
         assertNotNull(savedApplication.getId());
         assertEquals("NewApplication".toLowerCase(), savedApplication.getName());
