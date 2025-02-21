@@ -2,10 +2,13 @@ package br.com.blitech.authorization.api.v1.assembler;
 
 import br.com.blitech.authorization.api.v1.model.ApplicationModel;
 import br.com.blitech.authorization.api.v1.model.input.ApplicationInputModel;
+import br.com.blitech.authorization.api.v1.model.input.ApplicationPasswordInputModel;
 import br.com.blitech.authorization.domain.entity.Application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static br.com.blitech.authorization.api.TestUtlis.createApplicationInputModel;
+import static br.com.blitech.authorization.api.TestUtlis.createApplicationPasswordInputModel;
 import static br.com.blitech.authorization.domain.TestUtils.createApplication;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,25 +33,24 @@ class ApplicationModelAssemblerTest {
 
     @Test
     void testToEntity() {
-        ApplicationInputModel applicationInputModel = new ApplicationInputModel("New Application", "New User", "New Password");
-        Application application = applicationModelAssembler.toEntity(applicationInputModel);
+        ApplicationPasswordInputModel applicationPasswordInputModel = createApplicationPasswordInputModel();
+        Application application = applicationModelAssembler.toEntity(applicationPasswordInputModel);
 
         assertNotNull(application);
-        assertEquals(applicationInputModel.getName(), application.getName());
-        assertEquals(applicationInputModel.getUser(), application.getUser());
-        assertEquals(applicationInputModel.getPassword(), application.getPassword());
+        assertEquals(applicationPasswordInputModel.getName(), application.getName());
+        assertEquals(applicationPasswordInputModel.getUser(), application.getUser());
+        assertEquals(applicationPasswordInputModel.getPassword(), application.getPassword());
     }
 
     @Test
     void testApplyModel() {
         Application application = createApplication();
-        ApplicationInputModel applicationInputModel = new ApplicationInputModel("New Application", "New User", "New Password");
+        ApplicationInputModel applicationInputModel = createApplicationInputModel();
         Application updatedApplication = applicationModelAssembler.applyModel(application, applicationInputModel);
 
         assertNotNull(updatedApplication);
         assertEquals(application.getId(), updatedApplication.getId());
         assertEquals(applicationInputModel.getName(), updatedApplication.getName());
         assertEquals(applicationInputModel.getUser(), updatedApplication.getUser());
-        assertEquals(applicationInputModel.getPassword(), updatedApplication.getPassword());
     }
 }

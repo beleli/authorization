@@ -47,7 +47,7 @@ public class ProfileController implements ProfileControllerOpenApi {
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('PROFILES.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     public ProfileModel findById(@PathVariable Long applicationId, @PathVariable Long profileId) throws ProfileNotFoundException, ApplicationNotFoundException {
-        return profileModelAssembler.toModel(profileService.findOrThrow(profileId, applicationId));
+        return profileModelAssembler.toModel(profileService.findOrThrow(applicationId, profileId));
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ProfileController implements ProfileControllerOpenApi {
     @PreAuthorize("hasAuthority('PROFILES.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     public ProfileModel update(@PathVariable Long applicationId, @PathVariable Long profileId, @NotNull @RequestBody ProfileInputModel profileInputModel) throws BusinessException {
         try {
-            var profile = profileService.findOrThrow(profileId, applicationId);
+            var profile = profileService.findOrThrow(applicationId, profileId);
             var changedProfile = profileService.save(profileModelAssembler.applyModel(applicationId, profile, profileInputModel));
             return profileModelAssembler.toModel(changedProfile);
         } catch (ApplicationNotFoundException | ResourceNotFoundException | ActionNotFoundException e) {
@@ -81,7 +81,7 @@ public class ProfileController implements ProfileControllerOpenApi {
 
     @Override
     @DeleteMapping("/{profileId}")
-    @LogAndValidate(validateRequest = false)
+    @LogAndValidate(validateRequest = false, logResponse = false)
     @PreAuthorize("hasAuthority('PROFILES.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long applicationId, @PathVariable Long profileId) throws BusinessException {

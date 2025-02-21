@@ -7,12 +7,9 @@ import org.jetbrains.annotations.NotNull;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import static org.hibernate.internal.util.collections.CollectionHelper.listOf;
-import static org.springframework.boot.context.properties.bind.Bindable.setOf;
 
 public class TestUtlis {
 
@@ -38,22 +35,22 @@ public class TestUtlis {
 
     @NotNull
     public static ApplicationModel createApplicationModel() {
-        return new ApplicationModel(1L, "application", "user");
+        return new ApplicationModel(1L, "application", "user", false);
     }
 
     @NotNull
     public static ApplicationInputModel createApplicationInputModel() {
-        return new ApplicationInputModel("application", "user", "password");
+        return new ApplicationInputModel("application", "user", false);
     }
 
     @NotNull
-    public static LoginUserInputModel createLoginUserInputModel() {
-        return new LoginUserInputModel("user", "password", "application");
+    public static ApplicationPasswordInputModel createApplicationPasswordInputModel() {
+        return new ApplicationPasswordInputModel("application", "user", false, "password");
     }
 
     @NotNull
-    public static LoginApplicationInputModel createLoginApplicationInputModel() {
-        return new LoginApplicationInputModel("user", "password");
+    public static LoginInputModel createLoginInputModel() {
+        return new LoginInputModel("user", "password", "application");
     }
 
     @NotNull
@@ -83,7 +80,17 @@ public class TestUtlis {
 
     @NotNull
     public static ServiceUserInputModel createServiceUserInputModel() {
-        return new ServiceUserInputModel("user",1L,  "password");
+        return new ServiceUserInputModel("user",1L);
+    }
+
+    @NotNull
+    public static ServiceUserPasswordInputModel createServiceUserPasswordInputModel() {
+        return new ServiceUserPasswordInputModel("user",1L,  "password");
+    }
+
+    @NotNull
+    public static ChangePasswordInputModel createChangePasswordInputModel() {
+        return new ChangePasswordInputModel("password", "newPassword");
     }
 
     @NotNull

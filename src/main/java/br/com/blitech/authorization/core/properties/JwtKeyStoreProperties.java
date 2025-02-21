@@ -5,22 +5,18 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
-@ConfigurationProperties("authorization.jwt-keystore")
+@ConfigurationProperties("authorization.jwt-keys")
 public class JwtKeyStoreProperties {
 
-    private Resource jksLocation;
-    private String keypairAlias;
-    private String password;
+    private Resource publicKey;
+    private Resource privateKey;
 
-    public Resource getJksLocation() { return jksLocation; }
-    public String getKeypairAlias() { return keypairAlias; }
-    public String getPassword() { return password; }
+    public Resource getPublicKey() { return publicKey; }
+    public Resource getPrivateKey() { return privateKey; }
 
-    public JwtKeyStoreProperties(Resource jksLocation, @NotNull Resource keypairAlias, @NotNull Resource password) throws IOException {
-        this.jksLocation = jksLocation;
-        this.keypairAlias = keypairAlias.getContentAsString(Charset.defaultCharset());
-        this.password = password.getContentAsString(Charset.defaultCharset());
+    public JwtKeyStoreProperties(@NotNull Resource publicKey, @NotNull Resource privateKey) throws IOException {
+        this.publicKey = publicKey;
+        this.privateKey = privateKey;
     }
 }

@@ -1,5 +1,6 @@
 package br.com.blitech.authorization.api.v1.assembler;
 
+import br.com.blitech.authorization.api.v1.model.input.ApplicationPasswordInputModel;
 import org.springframework.stereotype.Component;
 
 import br.com.blitech.authorization.api.v1.model.ApplicationModel;
@@ -14,22 +15,23 @@ public class ApplicationModelAssembler {
         return new ApplicationModel (
             application.getId(),
             application.getName(),
-            application.getUser()
+            application.getUser(),
+            application.getUseDefaultKey()
         );
     }
 
-    public Application toEntity(@NotNull ApplicationInputModel applicationInputModel) {
+    public Application toEntity(@NotNull ApplicationPasswordInputModel applicationPasswordInputModel) {
         return new Application(
-            applicationInputModel.getName(),
-            applicationInputModel.getUser(),
-            applicationInputModel.getPassword()
+            applicationPasswordInputModel.getName(),
+            applicationPasswordInputModel.getUser(),
+            applicationPasswordInputModel.getPassword(),
+            applicationPasswordInputModel.getUseDefaultKey()
         );
     }
 
     public Application applyModel(@NotNull Application application, @NotNull ApplicationInputModel applicationInputModel) {
         application.setName(applicationInputModel.getName());
         application.setUser(applicationInputModel.getUser());
-        application.setPassword(applicationInputModel.getPassword());
         return application;
     }
 }

@@ -29,7 +29,7 @@ public class JwtResourceConfig {
             "/swagger-ui/**",
             "/actuator/**",
             "/v1/login/**",
-            "/.well-known/jwks.json"
+            "/.well-known/**"
     };
 
     @Bean

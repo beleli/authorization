@@ -71,8 +71,8 @@ class ServiceUserRepositoryTest {
     }
 
     @Test
-    void testFindByIdAndApplicationId() {
-        Optional<ServiceUser> foundUser = serviceUserRepository.findByIdAndApplicationId(serviceUser.getId(), application.getId());
+    void testFindByApplicationIdAndId() {
+        Optional<ServiceUser> foundUser = serviceUserRepository.findByApplicationIdAndId(application.getId(), serviceUser.getId());
         assertTrue(foundUser.isPresent());
         assertEquals(serviceUser.getName(), foundUser.get().getName());
     }

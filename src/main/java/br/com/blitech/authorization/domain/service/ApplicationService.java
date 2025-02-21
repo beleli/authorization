@@ -17,17 +17,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Service
 public class ApplicationService {
+    private final ApplicationKeyService applicationKeyService;
     private final ApplicationRepository applicationRepository;
     private final ProfileResourceActionRepository profileResourceActionRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public ApplicationService(ApplicationRepository applicationRepository, ProfileResourceActionRepository profileResourceActionRepository, PasswordEncoder passwordEncoder) {
+    public ApplicationService(ApplicationKeyService applicationKeyService, ApplicationRepository applicationRepository, ProfileResourceActionRepository profileResourceActionRepository, PasswordEncoder passwordEncoder) {
+        this.applicationKeyService = applicationKeyService;
         this.applicationRepository = applicationRepository;
         this.profileResourceActionRepository = profileResourceActionRepository;
         this.passwordEncoder = passwordEncoder;
@@ -49,18 +52,28 @@ public class ApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public Application validateLogin(String user, String password) throws ApplicationNotFoundException, UserInvalidPasswordException {
-        var application = applicationRepository.findByUser(user);
+    public Application validateLogin(String applicationName, String user, String password) throws ApplicationNotFoundException, UserInvalidPasswordException {
+        var application = applicationRepository.findByNameIgnoreCase(applicationName);
         if (application.isEmpty()) throw new ApplicationNotFoundException();
-        if (!passwordEncoder.matches(password, application.get().getPassword())) throw new UserInvalidPasswordException();
+
+        if (!user.equalsIgnoreCase(application.get().getUser()) || !passwordEncoder.matches(password, application.get().getPassword()))
+            throw new UserInvalidPasswordException();
+
         return application.get();
     }
 
     @Transactional(rollbackFor = ApplicationAlreadyExistsException.class)
-    public Application save(@NotNull Application application) throws ApplicationAlreadyExistsException {
+    public Application save(@NotNull Application application) throws ApplicationAlreadyExistsException, NoSuchAlgorithmException {
         try {
-            application.setPassword(passwordEncoder.encode(application.getPassword()));
+            if (application.getId() == null) {
+                application.setPassword(passwordEncoder.encode(application.getPassword()));
+            }
             application = applicationRepository.save(application);
+
+            if (!application.getUseDefaultKey() && !applicationKeyService.hasKey(application.getId())) {
+                applicationKeyService.save(application);
+            }
+
             applicationRepository.flush();
             return application;
         } catch (DataIntegrityViolationException e) {
@@ -88,6 +101,15 @@ public class ApplicationService {
         }
 
         return authorities;
+    }
+
+    @Transactional
+    public void changePassword(@NotNull Application application, String password, String newPassword) throws UserInvalidPasswordException {
+        if (!passwordEncoder.matches(password, application.getPassword())) {
+            throw new UserInvalidPasswordException();
+        }
+        application.setPassword(passwordEncoder.encode(newPassword));
+        applicationRepository.save(application);
     }
 
     private Application internalFindOrThrow(Long id) throws ApplicationNotFoundException {

@@ -64,12 +64,12 @@ class ServiceUserServiceTest {
         ServiceUser serviceUser = createServiceUser();
         serviceUser.setApplication(application);
         when(applicationService.findOrThrow(any())).thenReturn(application);
-        when(serviceUserRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.of(serviceUser));
+        when(serviceUserRepository.findByApplicationIdAndId(anyLong(), anyLong())).thenReturn(Optional.of(serviceUser));
 
         ServiceUser result = serviceUserService.findOrThrow(1L, 1L);
         assertEquals(serviceUser, result);
 
-        when(serviceUserRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        when(serviceUserRepository.findByApplicationIdAndId(anyLong(), anyLong())).thenReturn(Optional.empty());
         assertThrows(ServiceUserNotFoundException.class, () -> serviceUserService.findOrThrow(1L, 1L));
     }
 
@@ -104,7 +104,7 @@ class ServiceUserServiceTest {
         ServiceUser serviceUser = createServiceUser();
         serviceUser.setApplication(application);
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
-        when(serviceUserRepository.findByIdAndApplicationId(anyLong(), anyLong())).thenReturn(Optional.of(serviceUser));
+        when(serviceUserRepository.findByApplicationIdAndId(anyLong(), anyLong())).thenReturn(Optional.of(serviceUser));
         doNothing().when(serviceUserRepository).delete(any());
 
         assertDoesNotThrow(() -> serviceUserService.delete(1L, 1L));
@@ -134,13 +134,30 @@ class ServiceUserServiceTest {
         ServiceUser serviceUser = createServiceUser();
         serviceUser.setProfile(null);
         when(applicationService.findOrThrow(anyLong())).thenReturn(application);
-        when(serviceUserRepository.findByIdAndApplicationId(any(), any())).thenReturn(Optional.of(serviceUser));
+        when(serviceUserRepository.findByApplicationIdAndId(any(), any())).thenReturn(Optional.of(serviceUser));
         when(applicationService.getAuthorities(any())).thenReturn(Collections.singleton("ROLE_USER"));
 
         Set<String> authorities = serviceUserService.getAuthorities(1L, 1L);
         assertTrue(authorities.contains("ROLE_USER"));
 
-        when(serviceUserRepository.findByIdAndApplicationId(any(), any())).thenReturn(Optional.empty());
+        when(serviceUserRepository.findByApplicationIdAndId(any(), any())).thenReturn(Optional.empty());
         assertThrows(ServiceUserNotFoundException.class, () -> serviceUserService.getAuthorities(1L, 1L));
+    }
+
+    @Test
+    void testChangePassword() throws UserInvalidPasswordException {
+        ServiceUser serviceUser = createServiceUser();
+        String newPassword = "newPass";
+        serviceUser.setPassword("encodedOldPass");
+
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPass");
+        when(serviceUserRepository.save(any())).thenReturn(serviceUser);
+
+        serviceUserService.changePassword(serviceUser, serviceUser.getPassword(), newPassword);
+        assertEquals("encodedNewPass", serviceUser.getPassword());
+
+        when(passwordEncoder.matches(serviceUser.getPassword(), serviceUser.getPassword())).thenReturn(false);
+        assertThrows(UserInvalidPasswordException.class, () -> serviceUserService.changePassword(serviceUser, serviceUser.getPassword(), newPassword));
     }
 }

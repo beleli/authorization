@@ -3,6 +3,7 @@ package br.com.blitech.authorization.api.v1.model.input;
 import br.com.blitech.authorization.core.log.Loggable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 public class ApplicationInputModel implements Loggable {
@@ -17,19 +18,17 @@ public class ApplicationInputModel implements Loggable {
     @Schema(description = "Application user", example = "admin")
     private String user;
 
-    @NotBlank
-    @Length(max = 255)
-    @MaskProperty()
-    @Schema(description = "Application password", example = "admin123")
-    private String password;
+    @NotNull
+    @Schema(description = "Use default key", example = "true")
+    private Boolean useDefaultKey;
 
     public String getName() { return name; }
     public String getUser() { return user; }
-    public String getPassword() { return password; }
+    public Boolean getUseDefaultKey() { return useDefaultKey; }
 
-    public ApplicationInputModel(String name, String user, String password) {
+    public ApplicationInputModel(String name, String user, Boolean useDefaultKey) {
         this.name = name;
         this.user = user;
-        this.password = password;
+        this.useDefaultKey = useDefaultKey;
     }
 }

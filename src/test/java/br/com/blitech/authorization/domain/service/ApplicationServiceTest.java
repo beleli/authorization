@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
@@ -28,6 +29,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class ApplicationServiceTest {
+
+    @Mock
+    private ApplicationKeyService applicationKeyService;
 
     @Mock
     private ApplicationRepository applicationRepository;
@@ -83,27 +87,28 @@ class ApplicationServiceTest {
 
     @Test
     void testValidateLogin() throws ApplicationNotFoundException, UserInvalidPasswordException {
-        String user = "testUser";
+        String user = "user";
         String password = "testPass";
         Application application = createApplication();
         application.setPassword("encodedPass");
+        String applicationName = application.getName();
 
-        when(applicationRepository.findByUser(user)).thenReturn(Optional.of(application));
+        when(applicationRepository.findByNameIgnoreCase(applicationName)).thenReturn(Optional.of(application));
         when(passwordEncoder.matches(password, application.getPassword())).thenReturn(true);
 
-        Application result = applicationService.validateLogin(user, password);
+        Application result = applicationService.validateLogin(applicationName, user, password);
         assertEquals(application, result);
 
-        when(applicationRepository.findByUser(user)).thenReturn(Optional.empty());
-        assertThrows(ApplicationNotFoundException.class, () -> applicationService.validateLogin(user, password));
+        when(applicationRepository.findByNameIgnoreCase(applicationName)).thenReturn(Optional.empty());
+        assertThrows(ApplicationNotFoundException.class, () -> applicationService.validateLogin(applicationName, user, password));
 
-        when(applicationRepository.findByUser(user)).thenReturn(Optional.of(application));
+        when(applicationRepository.findByNameIgnoreCase(applicationName)).thenReturn(Optional.of(application));
         when(passwordEncoder.matches(password, application.getPassword())).thenReturn(false);
-        assertThrows(UserInvalidPasswordException.class, () -> applicationService.validateLogin(user, password));
+        assertThrows(UserInvalidPasswordException.class, () -> applicationService.validateLogin(applicationName, user, password));
     }
 
     @Test
-    void testSave() throws ApplicationAlreadyExistsException {
+    void testSave() throws ApplicationAlreadyExistsException, NoSuchAlgorithmException {
         Application application = createApplication();
         application.setPassword("testPass");
 
@@ -143,5 +148,22 @@ class ApplicationServiceTest {
 
         Set<String> authorities = applicationService.getAuthorities(id);
         assertTrue(authorities.contains("RESOURCE.ACTION"));
+    }
+
+    @Test
+    void testChangePassword() throws UserInvalidPasswordException {
+        Application application = createApplication();
+        String newPassword = "newPass";
+        application.setPassword("encodedOldPass");
+
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(passwordEncoder.encode(newPassword)).thenReturn("encodedNewPass");
+        when(applicationRepository.save(application)).thenReturn(application);
+
+        applicationService.changePassword(application, application.getPassword(), newPassword);
+        assertEquals("encodedNewPass", application.getPassword());
+
+        when(passwordEncoder.matches(application.getPassword(), application.getPassword())).thenReturn(false);
+        assertThrows(UserInvalidPasswordException.class, () -> applicationService.changePassword(application, application.getPassword(), newPassword));
     }
 }

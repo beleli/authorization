@@ -4,9 +4,12 @@ import br.com.blitech.authorization.api.aspect.LogAndValidateAspect.LogAndValida
 import br.com.blitech.authorization.api.utlis.ResourceUriHelper;
 import br.com.blitech.authorization.api.v1.assembler.ServiceUserModelAssembler;
 import br.com.blitech.authorization.api.v1.model.ServiceUserModel;
+import br.com.blitech.authorization.api.v1.model.input.ChangePasswordInputModel;
 import br.com.blitech.authorization.api.v1.model.input.ServiceUserInputModel;
+import br.com.blitech.authorization.api.v1.model.input.ServiceUserPasswordInputModel;
 import br.com.blitech.authorization.api.v1.openapi.ServiceUserControllerOpenApi;
 import br.com.blitech.authorization.domain.exception.BusinessException;
+import br.com.blitech.authorization.domain.exception.business.UserInvalidPasswordException;
 import br.com.blitech.authorization.domain.exception.entitynotfound.*;
 import br.com.blitech.authorization.domain.service.ServiceUserService;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +47,7 @@ public class ServiceUserController implements ServiceUserControllerOpenApi {
     @LogAndValidate(validateRequest = false)
     @PreAuthorize("hasAuthority('USERS.READ') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     public ServiceUserModel findById(@PathVariable Long applicationId, @PathVariable Long userId) throws ServiceUserNotFoundException, ApplicationNotFoundException {
-        return serviceUserModelAssembler.toModel(serviceUserService.findOrThrow(userId, applicationId));
+        return serviceUserModelAssembler.toModel(serviceUserService.findOrThrow(applicationId, userId));
     }
 
     @Override
@@ -52,9 +55,9 @@ public class ServiceUserController implements ServiceUserControllerOpenApi {
     @LogAndValidate
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('USERS.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
-    public ServiceUserModel insert(@PathVariable Long applicationId, @NotNull @RequestBody ServiceUserInputModel serviceUserInputModel) throws BusinessException {
+    public ServiceUserModel insert(@PathVariable Long applicationId, @NotNull @RequestBody ServiceUserPasswordInputModel serviceUserPasswordInputModel) throws BusinessException {
         try {
-            var user = serviceUserService.save(serviceUserModelAssembler.toEntity(applicationId, serviceUserInputModel));
+            var user = serviceUserService.save(serviceUserModelAssembler.toEntity(applicationId, serviceUserPasswordInputModel));
             ResourceUriHelper.addUriInResponseHeader(user.getId());
             return serviceUserModelAssembler.toModel(user);
         } catch (ApplicationNotFoundException e) {
@@ -68,7 +71,7 @@ public class ServiceUserController implements ServiceUserControllerOpenApi {
     @PreAuthorize("hasAuthority('USERS.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
     public ServiceUserModel update(@PathVariable Long applicationId, @PathVariable Long userId, @NotNull @RequestBody ServiceUserInputModel serviceUserInputModel) throws BusinessException {
         try {
-            var user = serviceUserService.findOrThrow(userId, applicationId);
+            var user = serviceUserService.findOrThrow(applicationId, userId);
             var changedUser = serviceUserService.save(serviceUserModelAssembler.applyModel(user, serviceUserInputModel));
             return serviceUserModelAssembler.toModel(changedUser);
         } catch (ApplicationNotFoundException | ProfileNotFoundException  e) {
@@ -83,5 +86,14 @@ public class ServiceUserController implements ServiceUserControllerOpenApi {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long applicationId, @PathVariable Long userId) throws BusinessException {
         serviceUserService.delete(applicationId, userId);
+    }
+
+    @Override
+    @PutMapping("/{userId}/password")
+    @LogAndValidate(logResponse = false)
+    @PreAuthorize("hasAuthority('USERS.WRITE') or @resourceUriHelper.isYourselfApplication(#applicationId)")
+    public void changePassword(@PathVariable Long applicationId, @PathVariable Long userId, @NotNull @RequestBody ChangePasswordInputModel changePasswordInputModel) throws ApplicationNotFoundException, ServiceUserNotFoundException, UserInvalidPasswordException {
+        var user = serviceUserService.findOrThrow(applicationId, userId);
+        serviceUserService.changePassword(user, changePasswordInputModel.getPassword(), changePasswordInputModel.getNewPassword());
     }
 }

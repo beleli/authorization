@@ -1,61 +1,52 @@
 package br.com.blitech.authorization.api.security;
 
 import br.com.blitech.authorization.core.properties.JwtKeyStoreProperties;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
-import java.security.KeyStore;
+import java.io.IOException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 @Component
 @EnableConfigurationProperties(JwtKeyStoreProperties.class)
 public class JwtKeyProvider {
     private final JwtKeyStoreProperties properties;
-    private final KeyStore keyStore;
-    private final Key key;
     private final PublicKey publicKey;
-    private final String keyId;
+    private final PrivateKey privateKey;
+    private final Long keyId;
 
     @Autowired
-    public JwtKeyProvider(@NotNull JwtKeyStoreProperties properties) {
+    public JwtKeyProvider(@NotNull JwtKeyStoreProperties properties) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         this.properties = properties;
-        this.keyStore = loadKeyStore();
-        this.key = loadKey();
         this.publicKey = loadPublicKey();
-        this.keyId = properties.getKeypairAlias();
+        this.privateKey = loadPrivateKey();
+        this.keyId = 0L;
     }
 
-    public Key getKey() { return key; }
     public PublicKey getPublicKey() { return publicKey; }
-    public String getKeyId() { return keyId; }
+    public PrivateKey getPrivateKey() { return privateKey; }
+    public Long getKeyId() { return keyId; }
 
-    @NotNull
-    private KeyStore loadKeyStore() {
-        try {
-            KeyStore jksKeyStore = KeyStore.getInstance("JKS");
-            jksKeyStore.load(properties.getJksLocation().getInputStream(), properties.getPassword().toCharArray());
-            return jksKeyStore;
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to load KeyStore", e);
-        }
+    private PublicKey loadPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+        KeyFactory keyFactory = KeyFactory.getInstance(SignatureAlgorithm.RS256.getFamilyName());
+        X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(properties.getPublicKey().getContentAsByteArray());
+
+        return keyFactory.generatePublic(publicKeySpec);
     }
 
-    private Key loadKey() {
-        try {
-            return keyStore.getKey(properties.getKeypairAlias(), properties.getPassword().toCharArray());
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to load Key from KeyStore", e);
-        }
-    }
+    private PrivateKey loadPrivateKey() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+        KeyFactory keyFactory = KeyFactory.getInstance(SignatureAlgorithm.RS256.getFamilyName());
+        PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(properties.getPrivateKey().getContentAsByteArray());
 
-    private PublicKey loadPublicKey() {
-        try {
-            return keyStore.getCertificate(properties.getKeypairAlias()).getPublicKey();
-        } catch (Exception e) {
-            throw new IllegalStateException("Failed to load PublicKey from KeyStore", e);
-        }
+        return keyFactory.generatePrivate(privateKeySpec);
     }
 }
