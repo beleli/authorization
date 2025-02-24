@@ -68,10 +68,7 @@ sonarqube {
 	properties {
 		property("sonar.projectKey", "beleli_authorization")
 		property("sonar.organization", "beleli")
-		property("sonar.host.url", "https://sonarcloud.io")
-		property("sonar.sources", "src/main/kotlin")
-		property("sonar.tests", "src/test/kotlin")
-		property("sonar.coverage.jacoco.xmlReportPaths", "${getBuildTreePath()}/reports/jacoco/test/jacocoTestReport.xml")
+		property("sonar.token", "aa32bf96eb389cca79a3c97b3503027114fb9132")
 	}
 }
 
