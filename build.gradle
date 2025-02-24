@@ -4,7 +4,7 @@ plugins {
 	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.4'
     id 'org.jetbrains.kotlin.jvm'
-	id 'org.sonarqube' version '3.3'
+	id 'org.sonarqube' version '6.0.0.5145'
 }
 
 group = 'br.com.blitech'
@@ -56,11 +56,13 @@ tasks.named('test') {
 }
 
 
-jacocoTestReport {
-	dependsOn test
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+
 	reports {
 		xml.required = true
 		html.required = true
+		csv.required = false
 	}
 }
 
@@ -69,6 +71,11 @@ sonarqube {
 		property("sonar.projectKey", "beleli_authorization")
 		property("sonar.organization", "beleli")
 		property("sonar.token", "aa32bf96eb389cca79a3c97b3503027114fb9132")
+		property("sonar.host.url", "https://sonarcloud.io")
+		property("sonar.sources", "src/main/kotlin")
+		property("sonar.tests", "src/test/kotlin")
+		property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+		property("sonar.java.coveragePlugin", "jacoco")
 	}
 }
 
