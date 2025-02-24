@@ -66,7 +66,12 @@ jacocoTestReport {
 
 sonarqube {
 	properties {
-		property "sonar.projectKey", "beleli_authorization"
-		property "sonar.coverage.jacoco.xmlReportPaths", "${getBuildTreePath()}/reports/jacoco/test/jacocoTestReport.xml"
+		property("sonar.projectKey", "beleli_authorization")
+		property("sonar.organization", "sua-organizacao-no-sonarcloud") // Apenas se estiver usando o SonarCloud
+		property("sonar.host.url", "https://sonarcloud.io") // Se for o SonarCloud
+		property("sonar.sources", "src/main/kotlin")
+		property("sonar.tests", "src/test/kotlin")
+		property("sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
 	}
 }
+
