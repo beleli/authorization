@@ -46,19 +46,27 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'com.h2database:h2'
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 	environment("AUTHORIZATION_SECRETS_MANAGER_IMPL", "localstack")
 	environment("SPRING_PROFILES_ACTIVE", "test")
-	finalizedBy("jacocoTestReport")
+	finalizedBy jacocoTestReport
 }
 
+
 jacocoTestReport {
+	dependsOn test
 	reports {
 		xml.required = true
 		html.required = true
+	}
+}
+
+sonarqube {
+	properties {
+		property "sonar.projectKey", "beleli_authorization"
+		property "sonar.coverage.jacoco.xmlReportPaths", "${getBuildTreePath()}/reports/jacoco/test/jacocoTestReport.xml"
 	}
 }
