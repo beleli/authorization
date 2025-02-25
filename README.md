@@ -38,7 +38,7 @@ Existem 3 modelos de autenticação:
 ### Docker
 Subir o docker-compose que está na raiz do projeto:
 ```bash
-  docker compose up
+docker compose up
 ```
 
 ### Variáveis de Ambiente
@@ -51,20 +51,20 @@ SPRING_PROFILES_ACTIVE: local
 
 Para compilar o projeto, execute o seguinte comando:
 ```bash
-  ./gradlew build
+./gradlew clean build
 ```
 
 ### Executar os Testes
 
 Para executar os testes, utilize o comando:
 ```bash
-  ./gradlew test
+./gradlew test
 ```
 
 ### Executar a Aplicação
 Para iniciar a aplicação, execute:
 ```bash
-  ./gradlew bootRun
+./gradlew bootRun
 ```
 
 ## Contribuição
