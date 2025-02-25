@@ -49,16 +49,18 @@ dependencies {
 }
 
 tasks.test {
+	finalizedBy jacocoTestReport
 	useJUnitPlatform()
 	environment("AUTHORIZATION_SECRETS_MANAGER_IMPL", "localstack")
 	environment("SPRING_PROFILES_ACTIVE", "test")
-	finalizedBy jacocoTestReport
 }
 
 
 tasks.jacocoTestReport {
 	reports {
 		xml.required = true
+		csv.required = false
+		xml.outputLocation = file("$buildDir/reports/jacoco/jacocoTestReport.xml")
 	}
 	dependsOn test
 }
