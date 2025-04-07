@@ -40,16 +40,6 @@ public class JwtKeyController implements JwtKeyControllerOpenApi {
     @Override
     @RateLimit
     @LogAndValidate
-    @GetMapping("/jwks.json")
-    public JwksModel getJwks() {
-        RSAPublicKey publicKey = (RSAPublicKey) jwtKeyProvider.getPublicKey();
-        Long kId = jwtKeyProvider.getKeyId();
-
-        return createJwksModel(kId, publicKey);
-    }
-
-    @RateLimit
-    @LogAndValidate
     @GetMapping("/{applicationId}/jwks.json")
     public JwksModel getApplicationJwks(@PathVariable Long applicationId) throws ApplicationNotFoundException, ApplicationKeyNotFoundException, NoSuchAlgorithmException, InvalidKeySpecException {
         var application = applicationService.findOrThrow(applicationId);
