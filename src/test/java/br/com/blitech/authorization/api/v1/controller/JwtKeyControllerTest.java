@@ -15,7 +15,6 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 
 import static br.com.blitech.authorization.domain.TestUtils.createApplication;
-import static br.com.blitech.authorization.domain.TestUtils.createApplicationKey;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -48,23 +47,6 @@ class JwtKeyControllerTest {
 
         when(mockPublicKey.getModulus()).thenReturn(new BigInteger(1, new byte[]{1, 2, 3, 4}));
         when(mockPublicKey.getPublicExponent()).thenReturn(BigInteger.valueOf(65537));
-    }
-
-    @Test
-    void testGetJwks() {
-        var key = jwtKeyController.getJwks();
-
-        assertNotNull(key);
-        assertEquals("RSA", key.getKty());
-        assertEquals("sig", key.getUse());
-        assertEquals("0", key.getKid());
-        assertEquals("RS256", key.getAlg());
-        assertEquals(
-                Base64.getUrlEncoder().withoutPadding().encodeToString(new BigInteger(1, new byte[]{1, 2, 3, 4}).toByteArray()),
-                key.getN());
-        assertEquals(
-                Base64.getUrlEncoder().withoutPadding().encodeToString(BigInteger.valueOf(65537).toByteArray()),
-                key.getE());
     }
 
     @Test

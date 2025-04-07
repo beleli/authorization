@@ -15,8 +15,8 @@ public class ApplicationPasswordInputModel extends ApplicationInputModel impleme
 
     public String getPassword() { return password; }
 
-    public ApplicationPasswordInputModel(String name, String user, Boolean useDefaultKey, String password) {
-        super(name, user, useDefaultKey);
+    public ApplicationPasswordInputModel(String name, String user, String password) {
+        super(name, user);
         this.password = password;
     }
 }

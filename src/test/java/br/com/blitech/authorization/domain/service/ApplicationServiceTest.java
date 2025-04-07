@@ -129,6 +129,7 @@ class ApplicationServiceTest {
         Application application = createApplication();
 
         when(applicationRepository.findById(id)).thenReturn(Optional.of(application));
+        doNothing().when(applicationKeyService).deleteKeys(application);
         doNothing().when(applicationRepository).delete(application);
 
         applicationService.delete(id);

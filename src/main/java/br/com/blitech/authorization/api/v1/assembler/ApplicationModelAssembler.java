@@ -15,8 +15,7 @@ public class ApplicationModelAssembler {
         return new ApplicationModel (
             application.getId(),
             application.getName(),
-            application.getUser(),
-            application.getUseDefaultKey()
+            application.getUser()
         );
     }
 
@@ -24,8 +23,7 @@ public class ApplicationModelAssembler {
         return new Application(
             applicationPasswordInputModel.getName(),
             applicationPasswordInputModel.getUser(),
-            applicationPasswordInputModel.getPassword(),
-            applicationPasswordInputModel.getUseDefaultKey()
+            applicationPasswordInputModel.getPassword()
         );
     }
 

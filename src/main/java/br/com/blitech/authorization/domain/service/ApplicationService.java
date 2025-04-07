@@ -84,7 +84,9 @@ public class ApplicationService {
     @Transactional(rollbackFor = ApplicationInUseException.class)
     public void delete(Long id) throws ApplicationNotFoundException, ApplicationInUseException {
         try {
-            applicationRepository.delete(this.internalFindOrThrow(id));
+            var application = this.internalFindOrThrow(id);
+            applicationKeyService.deleteKeys(application);
+            applicationRepository.delete(application);
             applicationRepository.flush();
         } catch (DataIntegrityViolationException e) {
             throw new ApplicationInUseException();

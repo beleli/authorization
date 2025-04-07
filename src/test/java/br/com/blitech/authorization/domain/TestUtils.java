@@ -22,7 +22,7 @@ public class TestUtils {
 
     @NotNull
     public static Application createApplication() {
-        return new Application("application", "user", "password", false);
+        return new Application("application", "user", "password");
     }
 
     @NotNull
