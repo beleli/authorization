@@ -46,11 +46,10 @@ public class Application extends UpdateControl{
     public void setProfiles(Set<Profile> profiles) { this.profiles = profiles; }
     public void setServiceUsers(Set<ServiceUser> serviceUsers) { this.serviceUsers = serviceUsers; }
 
-    public Application(String name, String user, String password, boolean useDefaultKey) {
+    public Application(String name, String user, String password) {
         this.name = name;
         this.user = user;
         this.password = password;
-        this.useDefaultKey = useDefaultKey;
     }
 
     public Application(Long id) { this.id = id; }

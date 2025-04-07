@@ -67,4 +67,12 @@ public class ApplicationKeyService {
         keyPairGenerator.initialize(SignatureAlgorithm.RS256.getMinKeyLength());
         return keyPairGenerator.generateKeyPair();
     }
+
+    @Transactional
+    public void deleteKeys(@NotNull Application application) {
+        var keys = applicationKeyRepository.findByApplicationIdOrderByIdDesc(application.getId());
+        for (var key : keys) {
+            applicationKeyRepository.delete(key);
+        }
+    }
 }

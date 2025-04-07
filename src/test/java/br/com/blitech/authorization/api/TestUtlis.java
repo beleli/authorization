@@ -35,17 +35,17 @@ public class TestUtlis {
 
     @NotNull
     public static ApplicationModel createApplicationModel() {
-        return new ApplicationModel(1L, "application", "user", false);
+        return new ApplicationModel(1L, "application", "user");
     }
 
     @NotNull
     public static ApplicationInputModel createApplicationInputModel() {
-        return new ApplicationInputModel("application", "user", false);
+        return new ApplicationInputModel("application", "user");
     }
 
     @NotNull
     public static ApplicationPasswordInputModel createApplicationPasswordInputModel() {
-        return new ApplicationPasswordInputModel("application", "user", false, "password");
+        return new ApplicationPasswordInputModel("application", "user", "password");
     }
 
     @NotNull
