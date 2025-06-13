@@ -1,43 +1,44 @@
 package br.com.blitech.authorization.api.filter;
 
+import br.com.blitech.authorization.api.exceptionhandler.ApiAuthenticationEntryPoint;
 import br.com.blitech.authorization.api.security.JwtKeyProvider;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.io.IOException;
 import java.security.PublicKey;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class JwtAuthenticationFilter extends GenericFilterBean {
+@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtKeyProvider jwtKeyProvider;
+    private final ApiAuthenticationEntryPoint authenticationEntryPoint;
 
-    public JwtAuthenticationFilter(JwtKeyProvider jwtKeyProvider) {
+    public JwtAuthenticationFilter(JwtKeyProvider jwtKeyProvider, ApiAuthenticationEntryPoint authenticationEntryPoint) {
         this.jwtKeyProvider = jwtKeyProvider;
+        this.authenticationEntryPoint = authenticationEntryPoint;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         try {
-            SecurityContextHolder.getContext().setAuthentication(getAuthentication((HttpServletRequest) request));
+            SecurityContextHolder.getContext().setAuthentication(getAuthentication(request));
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            httpResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
+            authenticationEntryPoint.commence(request, response, new BadCredentialsException("Invalid JWT token", e));
         }
     }
 
@@ -65,7 +66,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         List<?> authoritiesList = (List<?>) claimsJws.getBody().get("authorities");
         List<SimpleGrantedAuthority> authorities = authoritiesList.stream()
             .map(auth -> new SimpleGrantedAuthority(auth.toString()))
-            .collect(Collectors.toList());
+            .toList();
 
         return new UsernamePasswordAuthenticationToken(userName, null, authorities);
     }

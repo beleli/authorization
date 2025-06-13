@@ -8,8 +8,8 @@ import java.net.URI;
 import java.util.Set;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(name = "ApiError", description = "Details about an API error")
-public class ApiError implements Loggable {
+@Schema(name = "ApiProblemDetail", description = "Details about an API error")
+public class ApiProblemDetail implements Loggable {
 
     @Schema(example = "Bad Request")
     private final String title;
@@ -36,7 +36,7 @@ public class ApiError implements Loggable {
     public String getTraceId() { return traceId; }
     public Set<ApiFieldError> getErrors() { return errors; }
 
-    public ApiError(String title, Integer status, String detail, URI instance, String traceId, Set<ApiFieldError> errors) {
+    public ApiProblemDetail(String title, Integer status, String detail, URI instance, String traceId, Set<ApiFieldError> errors) {
         this.title = title;
         this.status = status;
         this.detail = detail;

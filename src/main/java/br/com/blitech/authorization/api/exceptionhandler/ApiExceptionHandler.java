@@ -1,6 +1,6 @@
 package br.com.blitech.authorization.api.exceptionhandler;
 
-import br.com.blitech.authorization.api.exceptionhandler.ApiError.ApiFieldError;
+import br.com.blitech.authorization.api.exceptionhandler.ApiProblemDetail.ApiFieldError;
 import br.com.blitech.authorization.core.log.Loggable;
 import br.com.blitech.authorization.core.message.Messages;
 import br.com.blitech.authorization.domain.exception.BusinessException;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -145,8 +144,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return Messages.get(key, args);
     }
 
-    private ApiError buildApiError(@NotNull HttpStatusCode statusCode, String message, WebRequest request, Set<ApiFieldError> fieldApiErrors) {
-        return new ApiError(
+    private ApiProblemDetail buildApiError(@NotNull HttpStatusCode statusCode, String message, WebRequest request, Set<ApiFieldError> fieldApiErrors) {
+        return new ApiProblemDetail(
             HttpStatus.valueOf(statusCode.value()).getReasonPhrase(),
             statusCode.value(),
             message,

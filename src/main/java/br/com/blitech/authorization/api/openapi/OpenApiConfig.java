@@ -1,6 +1,6 @@
 package br.com.blitech.authorization.api.openapi;
 
-import br.com.blitech.authorization.api.exceptionhandler.ApiError;
+import br.com.blitech.authorization.api.exceptionhandler.ApiProblemDetail;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -30,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @SecurityScheme(name = "Bearer Authentication", type = SecuritySchemeType.HTTP, bearerFormat = "JWT", scheme = "bearer")
 public class OpenApiConfig {
     private static final String CLIENT_ERROR_RESPONSE = "ClientErrorResponse";
-    private static final String API_ERROR = "ApiError";
+    private static final String API_PROBLEM_DETAIL = "ApiProblemDetail";
     private static final String API_FIELD_ERROR = "ApiFieldError";
 
     @Bean
@@ -57,28 +57,28 @@ public class OpenApiConfig {
 
     @Bean
     public OpenApiCustomizer openApiCustomizer() {
-        return openApi -> openApi.getPaths().values().forEach(pathItem -> {
+        return openApi -> openApi.getPaths().values().forEach(pathItem ->
             pathItem.readOperations().forEach(operation -> {
                 ApiResponses responses = operation.getResponses();
                 responses.addApiResponse("4xx", new ApiResponse().$ref(CLIENT_ERROR_RESPONSE));
-            });
-        });
+            })
+        );
     }
 
     @NotNull
     private Map<String, Schema> generateSchemas() {
-        final Map<String, Schema> schemaMap = new HashMap<>();
+        Map<String, Schema> schemaMap = new HashMap<>();
 
-        schemaMap.put(API_ERROR, ModelConverters.getInstance().read(ApiError.class).get(API_ERROR));
-        schemaMap.put(API_FIELD_ERROR, ModelConverters.getInstance().read(ApiError.ApiFieldError.class).get(API_FIELD_ERROR));
+        schemaMap.put(API_PROBLEM_DETAIL, ModelConverters.getInstance().read(ApiProblemDetail.class).get(API_PROBLEM_DETAIL));
+        schemaMap.put(API_FIELD_ERROR, ModelConverters.getInstance().read(ApiProblemDetail.ApiFieldError.class).get(API_FIELD_ERROR));
 
         return schemaMap;
     }
 
     @NotNull
     private Map<String, ApiResponse> generateResponses() {
-        final Map<String, ApiResponse> apiResponseMap = new HashMap<>();
-        Content content = new Content().addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(new Schema<ApiError>().$ref(API_ERROR)));
+        Map<String, ApiResponse> apiResponseMap = new HashMap<>();
+        Content content = new Content().addMediaType(APPLICATION_JSON_VALUE, new MediaType().schema(new Schema<ApiProblemDetail>().$ref(API_PROBLEM_DETAIL)));
 
         apiResponseMap.put(CLIENT_ERROR_RESPONSE, new ApiResponse().description("Client Error").content(content));
 
