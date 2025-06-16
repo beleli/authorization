@@ -1,14 +1,12 @@
 package br.com.blitech.authorization.api.exceptionhandler;
 
 import br.com.blitech.authorization.core.log.Loggable;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.net.URI;
 import java.util.Set;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@Schema(name = "ApiProblemDetail", description = "Details about an API error")
+    @Schema(name = "ApiProblemDetail", description = "Details about an API error")
 public class ApiProblemDetail implements Loggable {
 
     @Schema(example = "Bad Request")

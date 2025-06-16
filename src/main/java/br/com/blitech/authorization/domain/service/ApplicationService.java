@@ -53,13 +53,11 @@ public class ApplicationService {
 
     @Transactional(readOnly = true)
     public Application validateLogin(String applicationName, String user, String password) throws ApplicationNotFoundException, UserInvalidPasswordException {
-        var application = applicationRepository.findByNameIgnoreCase(applicationName);
-        if (application.isEmpty()) throw new ApplicationNotFoundException();
-
-        if (!user.equalsIgnoreCase(application.get().getUser()) || !passwordEncoder.matches(password, application.get().getPassword()))
+        var application = findByNameOrThrow(applicationName);
+        if (!user.equalsIgnoreCase(application.getUser()) || !passwordEncoder.matches(password, application.getPassword()))
             throw new UserInvalidPasswordException();
 
-        return application.get();
+        return application;
     }
 
     @Transactional(rollbackFor = ApplicationAlreadyExistsException.class)

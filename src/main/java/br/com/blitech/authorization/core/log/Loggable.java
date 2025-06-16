@@ -1,6 +1,6 @@
 package br.com.blitech.authorization.core.log;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import br.com.blitech.authorization.api.utlis.ObjectMapperProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public interface Loggable {
-    ObjectMapper objectMapper = new ObjectMapper();
     int MASK_MAX_LENGTH = 5;
 
     default String toLog() {
@@ -24,7 +23,7 @@ public interface Loggable {
 
     default String toJsonLog() {
         try {
-            return compactJson(objectMapper.writeValueAsString(getProperties(this, Loggable::toJsonLogSafely)));
+            return compactJson(ObjectMapperProvider.INSTANCE.writeValueAsString(getProperties(this, Loggable::toJsonLogSafely)));
         } catch (Exception e) {
             throw new RuntimeException("Error serializing object to JSON log", e);
         }
