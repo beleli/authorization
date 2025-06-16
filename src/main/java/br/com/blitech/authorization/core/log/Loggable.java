@@ -18,12 +18,12 @@ public interface Loggable {
     int MASK_MAX_LENGTH = 5;
 
     default String toLog() {
-        return formatLog(this, getProperties(this, Loggable::toLogSafely));
+        return formatLog(this, getProperties(this, item -> toSafely(item, Loggable::toLog)));
     }
 
     default String toJsonLog() {
         try {
-            return compactJson(ObjectMapperProvider.INSTANCE.writeValueAsString(getProperties(this, Loggable::toJsonLogSafely)));
+            return compactJson(ObjectMapperProvider.INSTANCE.writeValueAsString(getProperties(this, item -> toSafely(item, Loggable::toJsonLog))));
         } catch (Exception e) {
             throw new RuntimeException("Error serializing object to JSON log", e);
         }
@@ -38,8 +38,8 @@ public interface Loggable {
                 Object value = field.get(obj);
                 if (value instanceof Collection<?>) {
                     propertiesMap.put(field.getName(), ((Collection<?>) value).stream()
-                            .map(logFunction)
-                            .collect(Collectors.toList()));
+                        .map(logFunction)
+                        .collect(Collectors.toList()));
                 } else if (field.isAnnotationPresent(MaskProperty.class)) {
                     MaskProperty maskProperty = field.getAnnotation(MaskProperty.class);
                     propertiesMap.put(field.getName(), applyMask(Objects.toString(value, ""), maskProperty.format()));
@@ -53,19 +53,15 @@ public interface Loggable {
         return propertiesMap;
     }
 
-    private static String toLogSafely(Object obj) {
-        return obj instanceof Loggable loggable ? loggable.toLog() : Objects.toString(obj, "null");
-    }
-
-    private static String toJsonLogSafely(Object obj) {
-        return obj instanceof Loggable loggable ? loggable.toJsonLog() : Objects.toString(obj, "null");
+    private static String toSafely(Object obj, Function<Loggable, String> fn) {
+        return obj instanceof Loggable loggable ? fn.apply(loggable) : Objects.toString(obj, "null");
     }
 
     @NotNull
     private static String formatLog(@NotNull Object obj, @NotNull Map<String, Object> properties) {
         return obj.getClass().getSimpleName() + properties.entrySet().stream()
-                .map(entry -> entry.getKey() + "=" + entry.getValue())
-                .collect(Collectors.joining(", ", "(", ")"));
+            .map(entry -> entry.getKey() + "=" + entry.getValue())
+            .collect(Collectors.joining(", ", "(", ")"));
     }
 
     private static String applyMask(String value, LogMaskFormat format) {
@@ -103,8 +99,8 @@ public interface Loggable {
 
     private static String maskName(@NotNull String value) {
         return Arrays.stream(value.split(" "))
-                .map(part -> maskAfter(part, 2))
-                .collect(Collectors.joining(" "));
+            .map(part -> maskAfter(part, 2))
+            .collect(Collectors.joining(" "));
     }
 
     @NotNull
