@@ -7,10 +7,10 @@ import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-public class Messages {
+public final class Messages {
 
     private Messages() {
-        throw new IllegalStateException("Utility class");
+        // prevents instantiation
     }
 
     public static String get(String key, @NotNull Object... args) {
