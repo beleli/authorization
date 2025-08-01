@@ -22,8 +22,8 @@ class LoggableTest {
         String log = testLoggable.toLog();
         assertNotNull(log);
         assertTrue(log.contains("TestLoggable"));
-        assertTrue(log.contains("name=Jo** Do*"));
-        assertTrue(log.contains("email=j*******@e******.com"));
+        assertTrue(log.contains("name=Ca**** Be****"));
+        assertTrue(log.contains("email=b*****@g****.com"));
         assertTrue(log.contains("address=135 B*****"));
         assertTrue(log.contains("cpf=123*****01"));
         assertTrue(log.contains("token=*****"));
@@ -33,18 +33,17 @@ class LoggableTest {
     void testToJsonLog() {
         String jsonLog = testLoggable.toJsonLog();
         assertNotNull(jsonLog);
-        assertTrue(jsonLog.contains("\"name\":\"Jo** Do*\""));
-        assertTrue(jsonLog.contains("\"email\":\"j*******@e******.com\""));
-        assertTrue(jsonLog.contains("\"email\":\"j*******@e******.com\""));
+        assertTrue(jsonLog.contains("\"name\":\"Ca**** Be****\""));
+        assertTrue(jsonLog.contains("\"email\":\"b*****@g****.com\""));
         assertTrue(jsonLog.contains("\"address\":\"135 B*****\""));
         assertTrue(jsonLog.contains("\"token\":\"*****\""));
     }
 
     static class TestLoggable implements Loggable {
         @MaskProperty(format = LogMaskFormat.NAME)
-        private String name = "John Doe";
+        private String name = "Carlos Beleli";
         @MaskProperty(format = LogMaskFormat.EMAIL)
-        private String email = "john.doe@example.com";
+        private String email = "beleli@gmail.com";
         @MaskProperty(format = LogMaskFormat.ADDRESS)
         private String address = "135 Brompton Road";
         @MaskProperty(format = LogMaskFormat.CPF)
