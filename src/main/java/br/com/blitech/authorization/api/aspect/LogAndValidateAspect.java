@@ -40,6 +40,7 @@ import static jakarta.validation.Validation.buildDefaultValidatorFactory;
 public class LogAndValidateAspect {
     private final Map<Class<?>, Logger> loggers = new HashMap<>();
     private final Validator validator = buildDefaultValidatorFactory().getValidator();
+    private final ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     @Pointcut("@annotation(logAndValidate)")
     public void logMethods(LogAndValidate logAndValidate) {
@@ -48,6 +49,7 @@ public class LogAndValidateAspect {
 
     @Before("logMethods(logAndValidate)")
     public void logRequest(JoinPoint joinPoint, LogAndValidate logAndValidate) {
+        startTime.set(System.currentTimeMillis());
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         if (attributes == null) {
             getLogger(joinPoint).warn("Request attributes are null; cannot log request.");
@@ -97,7 +99,10 @@ public class LogAndValidateAspect {
                 : returnValue;
 
         var log = body == null ? null : createLog(body, logAndValidate.logResponse());
-        getLogger(joinPoint).info("response httpStatus:{}, body:{}", status, log);
+
+        long duration = System.currentTimeMillis() - startTime.get();
+        startTime.remove();
+        getLogger(joinPoint).info("response httpStatus:{}, body:{}, duration:{}ms", status, log, duration);
     }
 
     private Logger getLogger(@NotNull JoinPoint joinPoint) {
