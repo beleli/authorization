@@ -7,14 +7,14 @@ import org.hibernate.validator.constraints.Length;
 
 public class ChangePasswordInputModel implements Loggable {
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @MaskProperty()
     @Schema(description = "Current password", example = "admin123")
     private String password;
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @MaskProperty()
     @Schema(description = "New password", example = "admin456")
     private String newPassword;

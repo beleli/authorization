@@ -5,24 +5,23 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.hibernate.validator.constraints.Length;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public class ProfileInputModel implements Loggable {
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @Schema(description = "Profile name", example = "My Profile")
     private String name;
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @Schema(description = "Profile domain group", example = "My Group")
     private String group;
 
-    @NotNull
-    @Size(min = 1)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Size(min = 1, message = "api.constraints.size")
     @Schema(description = "Profile resources")
     private List<ResourceActionInputModel> resources;
 

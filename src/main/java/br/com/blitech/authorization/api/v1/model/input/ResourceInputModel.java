@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.Length;
 
 public class ResourceInputModel implements Loggable {
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @Schema(description = "Resource name", example = "My Resource")
     private String name;
 

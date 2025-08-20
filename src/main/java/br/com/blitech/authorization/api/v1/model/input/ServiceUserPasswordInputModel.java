@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.Length;
 
 public class ServiceUserPasswordInputModel extends ServiceUserInputModel implements Loggable {
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @MaskProperty()
     @Schema(description = "User password", example = "admin123")
     private String password;

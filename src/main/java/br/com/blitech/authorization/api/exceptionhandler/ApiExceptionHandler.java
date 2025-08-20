@@ -28,6 +28,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +82,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleConstraintViolationException(@NotNull ConstraintViolationException ex, WebRequest request) {
         Set<ApiFieldError> errors = ex.getConstraintViolations().stream()
             .map(constraintViolation ->
-                new ApiFieldError(constraintViolation.getPropertyPath().toString(), getMessage(constraintViolation.getMessage()))
+                new ApiFieldError(
+                    constraintViolation.getPropertyPath().toString(),
+                    getMessage(constraintViolation.getMessage(), constraintViolation.getConstraintDescriptor().getAttributes())
+                )
             ).collect(Collectors.toSet());
         var problemDetail = buildApiError(HttpStatus.BAD_REQUEST, getMessage("api.validation-exception"), request, errors);
         return this.handleExceptionInternal(ex, problemDetail, null, HttpStatus.BAD_REQUEST, request);
@@ -141,6 +145,10 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private String getMessage(String key, Object... args) {
+        return Messages.get(key, args);
+    }
+
+    private String getMessage(String key, Map<String, Object> args) {
         return Messages.get(key, args);
     }
 

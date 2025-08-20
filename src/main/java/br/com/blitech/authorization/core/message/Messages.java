@@ -1,10 +1,10 @@
 package br.com.blitech.authorization.core.message;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -19,19 +19,34 @@ public final class Messages {
         // prevents instantiation
     }
 
-    public static String get(String key, @NotNull Object... args) {
+    public static String get(String key, Object... args) {
+        String message = getMessageFromBundle(key);
+        if (args != null && args.length > 0) {
+            return MessageFormat.format(message, args);
+        }
+        return message;
+    }
+
+    public static String get(String key, Map<String, Object> args) {
+        String message = getMessageFromBundle(key);
+        if (args != null && !args.isEmpty()) {
+            for (Map.Entry<String, Object> entry : args.entrySet()) {
+                message = message.replace("{" + entry.getKey() + "}", String.valueOf(entry.getValue()));
+            }
+        }
+        return message;
+    }
+
+    private static String getMessageFromBundle(String key) {
         Locale locale = LocaleContextHolder.getLocale();
-        ResourceBundle resourceBundle = switch (locale.getLanguage().toLowerCase()) {
+        ResourceBundle bundle = switch (locale.getLanguage().toLowerCase()) {
             case "pt" -> ptBundle;
             case "en" -> enBundle;
             default -> defaultBundle;
         };
+
         try {
-            String message = resourceBundle.getString(key);
-            if (args.length > 0) {
-                return MessageFormat.format(message, args);
-            }
-            return message;
+            return bundle.getString(key);
         } catch (MissingResourceException e) {
             return key;
         }

@@ -7,20 +7,20 @@ import org.hibernate.validator.constraints.Length;
 
 public class LoginInputModel implements Loggable {
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @MaskProperty(format = LogMaskFormat.NAME)
     @Schema(description = "User name", example = "admin")
     private String username;
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @MaskProperty()
     @Schema(description = "User password", example = "admin123")
     private String password;
 
-    @NotBlank
-    @Length(max = 255)
+    @NotBlank(message = "api.constraints.not-blank")
+    @Length(max = 255, message = "api.constraints.length")
     @MaskProperty()
     @Schema(description = "Application name", example = "My Application")
     private String application;
