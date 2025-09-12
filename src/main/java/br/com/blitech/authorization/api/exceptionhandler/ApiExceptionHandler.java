@@ -70,7 +70,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Object> handleBusinessException(BusinessException ex, WebRequest request) {
-        return this.handleExceptionInternal(ex, null, null , HttpStatus.BAD_REQUEST, request);
+        return this.handleExceptionInternal(ex, null, null , HttpStatus.UNPROCESSABLE_ENTITY, request);
     }
 
     @ExceptionHandler(PropertyReferenceException.class)
