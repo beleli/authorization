@@ -3,6 +3,7 @@ package br.com.blitech.authorization.infrastructure.cache;
 import br.com.blitech.authorization.domain.service.CacheService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -11,9 +12,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryAdapter implements CacheService {
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     private final Map<String, Register> cache = new ConcurrentHashMap<>();
 
+    @Autowired
     public MemoryAdapter(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
