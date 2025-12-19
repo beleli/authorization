@@ -18,15 +18,19 @@ public interface Loggable {
     int MASK_MAX_LENGTH = 5;
 
     default String toLog() {
-        return formatLog(this, getProperties(this, item -> toSafely(item, Loggable::toLog)));
+        return formatLog(this, getProperties(this, item -> toLog(item, Loggable::toLog)));
     }
 
     default String toJsonLog() {
         try {
-            return compactJson(ObjectMapperProvider.INSTANCE.writeValueAsString(getProperties(this, item -> toSafely(item, Loggable::toJsonLog))));
+            return compactJson(ObjectMapperProvider.INSTANCE.writeValueAsString(getProperties(this, item -> toLog(item, Loggable::toJsonLog))));
         } catch (Exception e) {
             throw new RuntimeException("Error serializing object to JSON log", e);
         }
+    }
+
+    private static String toLog(Object obj, Function<Loggable, String> fn) {
+        return obj instanceof Loggable loggable ? fn.apply(loggable) : Objects.toString(obj, "null");
     }
 
     @NotNull
@@ -51,10 +55,6 @@ public interface Loggable {
             }
         }
         return propertiesMap;
-    }
-
-    private static String toSafely(Object obj, Function<Loggable, String> fn) {
-        return obj instanceof Loggable loggable ? fn.apply(loggable) : Objects.toString(obj, "null");
     }
 
     @NotNull
