@@ -6,6 +6,7 @@ import br.com.blitech.authorization.domain.exception.BusinessException;
 import br.com.blitech.authorization.domain.exception.business.UserNotAuthorizedException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,7 +17,7 @@ import java.security.spec.InvalidKeySpecException;
 public interface LoginControllerOpenApi {
 
     @Operation(summary = "Generate access token with Application credentials")
-    LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
+    LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel, HttpServletResponse response) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;
 
     @Operation(summary = "Generate access token with Service User credentials")
     LoginModel loginServiceUser(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException;

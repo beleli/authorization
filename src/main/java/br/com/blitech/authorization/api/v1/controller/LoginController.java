@@ -18,6 +18,8 @@ import br.com.blitech.authorization.domain.service.ServiceUserService;
 import br.com.blitech.authorization.domain.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -42,6 +44,7 @@ public class LoginController implements LoginControllerOpenApi {
     private final UserService userService;
 
     @Autowired
+
     public LoginController(JwtKeyProvider jwtKeyProvider, ApplicationService applicationService, ApplicationKeyService applicationKeyService, UserService userService, ServiceUserService serviceUserService) {
         this.jwtKeyProvider = jwtKeyProvider;
         this.applicationService = applicationService;
@@ -54,11 +57,23 @@ public class LoginController implements LoginControllerOpenApi {
     @RateLimit
     @LogAndValidate
     @PostMapping("/application")
-    public LoginModel loginApplication(@NotNull @RequestBody LoginInputModel loginInputModel) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
+    public LoginModel loginApplication(
+            @NotNull @RequestBody LoginInputModel loginInputModel,
+           HttpServletResponse response
+    ) throws BusinessException, NoSuchAlgorithmException, InvalidKeySpecException {
         try {
             var application = applicationService.validateLogin(loginInputModel.getApplication(), loginInputModel.getUsername(), loginInputModel.getPassword());
             var authorities = applicationService.getAuthorities(application.getId());
-            return new LoginModel(generateToken(application.getUser(), application, authorities, true));
+            var token = generateToken(application.getUser(), application, authorities, true);
+
+            Cookie cookie = new Cookie("authToken", token);
+            cookie.setHttpOnly(true);
+            cookie.setSecure(false);
+            cookie.setPath("/");
+            cookie.setMaxAge(3600);
+            response.addCookie(cookie);
+
+            return new LoginModel(token);
         } catch (ApplicationNotFoundException | ApplicationKeyNotFoundException | UserInvalidPasswordException e) {
             throw new UserNotAuthorizedException();
         }
