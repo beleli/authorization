@@ -52,18 +52,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = header.replace("Bearer", "").trim();
         PublicKey publicKey = jwtKeyProvider.getPublicKey();
 
-        Jws<Claims> claimsJws = Jwts.parserBuilder()
-            .setSigningKey(publicKey)
-            .build()
-            .parseClaimsJws(token);
+        Jws<Claims> claimsJws = Jwts.parser()
+                .verifyWith(publicKey)
+                .build().parseSignedClaims(token);
 
-        String userName = claimsJws.getBody().getSubject();
+        String userName = claimsJws.getPayload().getSubject();
         request.setAttribute("username", userName);
 
-        String application = claimsJws.getBody().get("application").toString();
+        String application = claimsJws.getPayload().get("application").toString();
         request.setAttribute("application", application);
 
-        List<?> authoritiesList = (List<?>) claimsJws.getBody().get("authorities");
+        List<?> authoritiesList = (List<?>) claimsJws.getPayload().get("authorities");
         List<SimpleGrantedAuthority> authorities = authoritiesList.stream()
             .map(auth -> new SimpleGrantedAuthority(auth.toString()))
             .toList();

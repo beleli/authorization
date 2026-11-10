@@ -32,6 +32,8 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static io.jsonwebtoken.Jwts.*;
+
 @RestController
 @RequestMapping(path = "/v1/login", produces = MediaType.APPLICATION_JSON_VALUE)
 public class LoginController implements LoginControllerOpenApi {
@@ -119,13 +121,13 @@ public class LoginController implements LoginControllerOpenApi {
             key = applicationKeyService.getLastPrivateKey(application);
         }
 
-        return Jwts.builder()
-                .setHeader(headers)
-                .setSubject(username)
-                .addClaims(claims)
-                .setIssuedAt(date)
-                .setExpiration(expiration)
-                .signWith(key, SignatureAlgorithm.RS256)
+        return builder()
+                .header().add(headers).and()
+                .subject(username)
+                .claims(claims)
+                .issuedAt(date)
+                .expiration(expiration)
+                .signWith(key)
                 .compact();
     }
 
