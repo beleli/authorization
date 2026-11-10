@@ -35,9 +35,16 @@ public class RedisAdapter implements CacheService {
 
     @Override
     public void setKey(String key, Object value, Duration duration) {
+        if (value == null) {
+            throw new IllegalArgumentException("Value cannot be null for key: " + key);
+        }
         ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
         try {
-            valueOps.set(key, objectMapper.writeValueAsString(value), duration);
+            Object valueToStore = value;
+            if (!(value instanceof String)) {
+                valueToStore = objectMapper.writeValueAsString(value);
+            }
+            valueOps.set(key, valueToStore, duration);
         } catch (Exception e) {
             throw new RuntimeException("Failed to serialize value for key: " + key, e);
         }

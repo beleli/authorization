@@ -39,11 +39,34 @@ class RedisAdapterTest {
         Duration duration = Duration.ofSeconds(60);
 
         redisAdapter.setKey(key, value, duration);
-        verify(valueOperations).set(eq(key), anyString(), eq(duration));
+        verify(valueOperations).set(eq(key), eq(value), eq(duration));
 
         when(valueOperations.get(key)).thenReturn(value);
         String result = redisAdapter.getKey(key, String.class);
         assertEquals(value, result);
+    }
+
+    @Test
+    void testSetAndGetKeyIntegerValue() {
+        String key = "testKey";
+        Integer value = 42;
+        Duration duration = Duration.ofSeconds(60);
+
+        redisAdapter.setKey(key, value, duration);
+        verify(valueOperations).set(eq(key), eq(value.toString()), eq(duration));
+
+        when(valueOperations.get(key)).thenReturn(value.toString());
+        Integer result = redisAdapter.getKey(key, Integer.class);
+        assertEquals(value, result);
+    }
+
+    @Test
+    void testSetNullValue() {
+        String key = "testKey";
+        Object value = null;
+        Duration duration = Duration.ofSeconds(60);
+
+        assertThrows(IllegalArgumentException.class, () -> redisAdapter.setKey(key, value, duration));
     }
 
     @Test
