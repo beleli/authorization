@@ -1,35 +1,31 @@
 package br.com.blitech.authorization.infrastructure.cache;
 
 import br.com.blitech.authorization.domain.service.CacheService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.time.Duration;
 
 public class RedisAdapter implements CacheService {
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
-    public RedisAdapter(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
+    public RedisAdapter(StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
     }
 
     @Override
     public <T> T getKey(String key, Class<T> clazz) {
-        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
-        Object value = valueOps.get(key);
+        String value = redisTemplate.opsForValue().get(key);
         if (value == null) {
             return null;
         }
-        if (clazz == String.class) {
-            return (T) value;
-        }
         try {
-            return objectMapper.readValue(value.toString(), clazz);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to deserialize value for key: " + key, e);
+            return objectMapper.readValue(value, clazz);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to deserialize value for key: " + key, e);
         }
     }
 
@@ -38,15 +34,12 @@ public class RedisAdapter implements CacheService {
         if (value == null) {
             throw new IllegalArgumentException("Value cannot be null for key: " + key);
         }
-        ValueOperations<String, Object> valueOps = redisTemplate.opsForValue();
+        String serializedValue;
         try {
-            Object valueToStore = value;
-            if (!(value instanceof String)) {
-                valueToStore = objectMapper.writeValueAsString(value);
-            }
-            valueOps.set(key, valueToStore, duration);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to serialize value for key: " + key, e);
+            serializedValue = objectMapper.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Failed to serialize value for key: " + key, e);
         }
+        redisTemplate.opsForValue().set(key, serializedValue, duration);
     }
 }

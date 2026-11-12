@@ -5,7 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 
 import java.time.Duration;
@@ -16,19 +16,17 @@ import static org.mockito.Mockito.*;
 class RedisAdapterTest {
 
     @Mock
-    private RedisTemplate<String, Object> redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     @Mock
-    private ValueOperations<String, Object> valueOperations;
+    private ValueOperations<String, String> valueOperations;
 
-    private ObjectMapper objectMapper;
     private RedisAdapter redisAdapter;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        redisAdapter = new RedisAdapter(redisTemplate, objectMapper);
+        redisAdapter = new RedisAdapter(redisTemplate, new ObjectMapper());
         when(redisTemplate.opsForValue()).thenReturn(valueOperations);
     }
 
@@ -39,9 +37,9 @@ class RedisAdapterTest {
         Duration duration = Duration.ofSeconds(60);
 
         redisAdapter.setKey(key, value, duration);
-        verify(valueOperations).set(eq(key), eq(value), eq(duration));
+        verify(valueOperations).set(key, "\"testValue\"", duration);
 
-        when(valueOperations.get(key)).thenReturn(value);
+        when(valueOperations.get(key)).thenReturn("\"testValue\"");
         String result = redisAdapter.getKey(key, String.class);
         assertEquals(value, result);
     }
@@ -53,20 +51,34 @@ class RedisAdapterTest {
         Duration duration = Duration.ofSeconds(60);
 
         redisAdapter.setKey(key, value, duration);
-        verify(valueOperations).set(eq(key), eq(value.toString()), eq(duration));
+        verify(valueOperations).set(key, "42", duration);
 
-        when(valueOperations.get(key)).thenReturn(value.toString());
+        when(valueOperations.get(key)).thenReturn("42");
         Integer result = redisAdapter.getKey(key, Integer.class);
+        assertEquals(value, result);
+    }
+
+    @Test
+    void testSetAndGetKeyObjectValue() {
+        String key = "testKey";
+        Sample value = new Sample("name", 10);
+        Duration duration = Duration.ofSeconds(60);
+
+        redisAdapter.setKey(key, value, duration);
+        verify(valueOperations).set(key, "{\"name\":\"name\",\"count\":10}", duration);
+
+        when(valueOperations.get(key)).thenReturn("{\"name\":\"name\",\"count\":10}");
+        Sample result = redisAdapter.getKey(key, Sample.class);
         assertEquals(value, result);
     }
 
     @Test
     void testSetNullValue() {
         String key = "testKey";
-        Object value = null;
         Duration duration = Duration.ofSeconds(60);
 
-        assertThrows(IllegalArgumentException.class, () -> redisAdapter.setKey(key, value, duration));
+        assertThrows(IllegalArgumentException.class, () -> redisAdapter.setKey(key, null, duration));
+        verifyNoInteractions(valueOperations);
     }
 
     @Test
@@ -81,23 +93,20 @@ class RedisAdapterTest {
     @Test
     void testSetKeySerializationError() {
         String key = "testKey";
-        Object value = new Object() {
-            @Override
-            public String toString() {
-                throw new RuntimeException("Serialization error");
-            }
-        };
+        Object value = new Object();
         Duration duration = Duration.ofSeconds(60);
 
-        assertThrows(RuntimeException.class, () -> redisAdapter.setKey(key, value, duration));
+        assertThrows(IllegalStateException.class, () -> redisAdapter.setKey(key, value, duration));
+        verifyNoInteractions(valueOperations);
     }
 
     @Test
     void testGetKeyDeserializationError() {
         String key = "testKey";
-        String value = "invalidJson";
-        when(valueOperations.get(key)).thenReturn(value);
+        when(valueOperations.get(key)).thenReturn("invalidJson");
 
-        assertThrows(RuntimeException.class, () -> redisAdapter.getKey(key, Object.class));
+        assertThrows(IllegalStateException.class, () -> redisAdapter.getKey(key, Object.class));
     }
+
+    record Sample(String name, int count) { }
 }

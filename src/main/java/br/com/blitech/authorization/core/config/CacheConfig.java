@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 @Configuration
 @EnableConfigurationProperties(CacheProperties.class)
@@ -29,7 +29,7 @@ public class CacheConfig {
     @Bean
     public CacheService cacheService() {
         if (cacheProperties.getType() == CacheProperties.Type.REDIS) {
-            return new RedisAdapter(redisTemplate(redisConnectionFactory()), objectMapper);
+            return new RedisAdapter(stringRedisTemplate(redisConnectionFactory()), objectMapper);
         } else if (cacheProperties.getType() == CacheProperties.Type.MEMORY) {
             return new MemoryAdapter(objectMapper);
         } else {
@@ -49,9 +49,7 @@ public class CacheConfig {
 
     @Bean
     @ConditionalOnProperty(name = "authorization.cache.type", havingValue = "redis")
-    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, Object> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        return template;
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        return new StringRedisTemplate(connectionFactory);
     }
 }
